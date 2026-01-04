@@ -6,6 +6,16 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		F98F44142F0A805300EF7D9F /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = F98F44132F0A805300EF7D9F /* Alamofire */; };
+		F98F44172F0A807E00EF7D9F /* SVProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = F98F44162F0A807E00EF7D9F /* SVProgressHUD */; };
+		F98F441A2F0A80AC00EF7D9F /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = F98F44192F0A80AC00EF7D9F /* SDWebImage */; };
+		F98F441D2F0ABB1500EF7D9F /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = F98F441C2F0ABB1500EF7D9F /* IQKeyboardManagerSwift */; };
+		F9CA30912F0AD74100E3D873 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = F9CA30902F0AD74100E3D873 /* FirebaseAuth */; };
+		F9CA30932F0AD74100E3D873 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = F9CA30922F0AD74100E3D873 /* FirebaseCore */; };
+		F9CA30952F0AD74100E3D873 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = F9CA30942F0AD74100E3D873 /* FirebaseMessaging */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		F98F43382F0A7CDB00EF7D9F /* AYUA.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AYUA.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +46,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F98F441A2F0A80AC00EF7D9F /* SDWebImage in Frameworks */,
+				F9CA30912F0AD74100E3D873 /* FirebaseAuth in Frameworks */,
+				F9CA30952F0AD74100E3D873 /* FirebaseMessaging in Frameworks */,
+				F98F441D2F0ABB1500EF7D9F /* IQKeyboardManagerSwift in Frameworks */,
+				F98F44172F0A807E00EF7D9F /* SVProgressHUD in Frameworks */,
+				F9CA30932F0AD74100E3D873 /* FirebaseCore in Frameworks */,
+				F98F44142F0A805300EF7D9F /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +95,13 @@
 			);
 			name = AYUA;
 			packageProductDependencies = (
+				F98F44132F0A805300EF7D9F /* Alamofire */,
+				F98F44162F0A807E00EF7D9F /* SVProgressHUD */,
+				F98F44192F0A80AC00EF7D9F /* SDWebImage */,
+				F98F441C2F0ABB1500EF7D9F /* IQKeyboardManagerSwift */,
+				F9CA30902F0AD74100E3D873 /* FirebaseAuth */,
+				F9CA30922F0AD74100E3D873 /* FirebaseCore */,
+				F9CA30942F0AD74100E3D873 /* FirebaseMessaging */,
 			);
 			productName = AYUA;
 			productReference = F98F43382F0A7CDB00EF7D9F /* AYUA.app */;
@@ -107,6 +131,13 @@
 			);
 			mainGroup = F98F432F2F0A7CDB00EF7D9F;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				F98F44122F0A805300EF7D9F /* XCRemoteSwiftPackageReference "Alamofire" */,
+				F98F44152F0A807E00EF7D9F /* XCRemoteSwiftPackageReference "SVProgressHUD" */,
+				F98F44182F0A80AC00EF7D9F /* XCRemoteSwiftPackageReference "SDWebImage" */,
+				F98F441B2F0ABB1500EF7D9F /* XCRemoteSwiftPackageReference "IQKeyboardManager" */,
+				F9CA308F2F0AD74100E3D873 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F98F43392F0A7CDB00EF7D9F /* Products */;
 			projectDirPath = "";
@@ -345,6 +376,87 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		F98F44122F0A805300EF7D9F /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.11.0;
+			};
+		};
+		F98F44152F0A807E00EF7D9F /* XCRemoteSwiftPackageReference "SVProgressHUD" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SVProgressHUD/SVProgressHUD";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.3.1;
+			};
+		};
+		F98F44182F0A80AC00EF7D9F /* XCRemoteSwiftPackageReference "SDWebImage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImage";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.21.5;
+			};
+		};
+		F98F441B2F0ABB1500EF7D9F /* XCRemoteSwiftPackageReference "IQKeyboardManager" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hackiftekhar/IQKeyboardManager";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.2;
+			};
+		};
+		F9CA308F2F0AD74100E3D873 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.7.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		F98F44132F0A805300EF7D9F /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F98F44122F0A805300EF7D9F /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+		F98F44162F0A807E00EF7D9F /* SVProgressHUD */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F98F44152F0A807E00EF7D9F /* XCRemoteSwiftPackageReference "SVProgressHUD" */;
+			productName = SVProgressHUD;
+		};
+		F98F44192F0A80AC00EF7D9F /* SDWebImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F98F44182F0A80AC00EF7D9F /* XCRemoteSwiftPackageReference "SDWebImage" */;
+			productName = SDWebImage;
+		};
+		F98F441C2F0ABB1500EF7D9F /* IQKeyboardManagerSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F98F441B2F0ABB1500EF7D9F /* XCRemoteSwiftPackageReference "IQKeyboardManager" */;
+			productName = IQKeyboardManagerSwift;
+		};
+		F9CA30902F0AD74100E3D873 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F9CA308F2F0AD74100E3D873 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		F9CA30922F0AD74100E3D873 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F9CA308F2F0AD74100E3D873 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		F9CA30942F0AD74100E3D873 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F9CA308F2F0AD74100E3D873 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = F98F43302F0A7CDB00EF7D9F /* Project object */;
 }
