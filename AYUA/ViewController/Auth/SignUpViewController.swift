@@ -98,7 +98,7 @@ extension SignUpViewController {
                          "language":objAppShareData.currentLanguage]as [String:Any]
         print(dictParam)
         
-        objWebServiceManager.requestPost(strURL: WsUrl.uel_SignUp, queryParams: [:], params: dictParam, strCustomValidation: "", showIndicator: false) { (response) in
+        objWebServiceManager.requestPost(strURL: WsUrl.url_SignUp, queryParams: [:], params: dictParam, strCustomValidation: "", showIndicator: false) { (response) in
             objWebServiceManager.hideIndicator()
             
             let status = (response["status"] as? Int)
@@ -111,7 +111,7 @@ extension SignUpViewController {
                     objAppShareData.SaveUpdateUserInfoFromAppshareData(userDetail: resultArray)
                     objAppShareData.fetchUserInfoFromAppshareData()
                     
-                    if self.strType == UserInfoType.Employee.rawValue{
+                    if self.strType == UserInfoType.User.rawValue{
                         self.setRootController()
                     }else{
                         self.setRootControllerEmployer()

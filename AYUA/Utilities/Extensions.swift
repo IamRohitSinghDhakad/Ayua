@@ -427,6 +427,45 @@ extension UIImageView {
     }
 }
 
+extension UIColor {
+    convenience init(hex: String) {
+        var hex = hex.replacingOccurrences(of: "#", with: "")
+        var int: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&int)
+        self.init(
+            red: CGFloat((int >> 16) & 0xff) / 255,
+            green: CGFloat((int >> 8) & 0xff) / 255,
+            blue: CGFloat(int & 0xff) / 255,
+            alpha: 1
+        )
+    }
+}
+
+extension UIView {
+
+    func applySoftShadow(
+        color: UIColor = .black,
+        opacity: Float = 0.15,
+        offset: CGSize = CGSize(width: 0, height: 3),
+        radius: CGFloat = 6,
+        cornerRadius: CGFloat = 12
+    ) {
+        layer.masksToBounds = false
+        layer.shadowColor = color.cgColor
+        layer.shadowOpacity = opacity
+        layer.shadowOffset = offset
+        layer.shadowRadius = radius
+        layer.cornerRadius = cornerRadius
+
+        layer.shadowPath = UIBezierPath(
+            roundedRect: bounds,
+            cornerRadius: cornerRadius
+        ).cgPath
+    }
+}
+
+
+
 extension UIView {
     
     func setCornerRadiusIndiviualCorners(radius: CGFloat, corners: UIRectCorner) {

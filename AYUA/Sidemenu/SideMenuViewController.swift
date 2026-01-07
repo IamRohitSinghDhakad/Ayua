@@ -28,38 +28,70 @@ class SideMenuViewController: UIViewController, UITableViewDelegate, UITableView
         return menuItems.count
     }
     
+//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//        let cell = tableView.dequeueReusableCell(withIdentifier: "SideMenuTableViewCell", for: indexPath)as! SideMenuTableViewCell
+//        
+//        let item = menuItems[indexPath.row]
+//        // let isActive = indexPath.row == selectedIndex
+//        
+//        cell.lblTitle?.text = item.title
+//        // cell.imageView?.image = UIImage(named: isActive ? item.iconActive : item.iconInactive)
+//        
+//        // Optional: Style text when active
+//        // cell.textLabel?.textColor = isActive ? .systemBlue : .label
+//        
+//        return cell
+//    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "SideMenuTableViewCell", for: indexPath)as! SideMenuTableViewCell
-        
+
+        let cell = tableView.dequeueReusableCell(
+            withIdentifier: "SideMenuTableViewCell",
+            for: indexPath
+        ) as! SideMenuTableViewCell
+
         let item = menuItems[indexPath.row]
-        // let isActive = indexPath.row == selectedIndex
-        
-        cell.lblTitle?.text = item.title
-        // cell.imageView?.image = UIImage(named: isActive ? item.iconActive : item.iconInactive)
-        
-        // Optional: Style text when active
-        // cell.textLabel?.textColor = isActive ? .systemBlue : .label
-        
+        let isSelected = indexPath.row == selectedIndex
+
+        cell.configure(with: item, isSelected: isSelected)
+
         return cell
     }
+
     
     // MARK: - UITableViewDelegate
+//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        selectedIndex = indexPath.row
+//        tableView.reloadData()
+//        
+//        let selectedItem = menuItems[indexPath.row]
+//        print("Selected menu: \(selectedItem.title)")
+//        
+//        if selectedItem.title == "Logout" {
+//            showLogoutConfirmation()
+//        } else {
+//            // Use custom animation instead of default dismissal
+//            // Call the closure to notify parent VC
+//            self.onMenuItemSelected?(selectedItem)
+//            self.dismissSelf()
+//        }
+//    }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+
         selectedIndex = indexPath.row
         tableView.reloadData()
-        
+
         let selectedItem = menuItems[indexPath.row]
-        print("Selected menu: \(selectedItem.title)")
-        
+
         if selectedItem.title == "Logout" {
             showLogoutConfirmation()
         } else {
-            // Use custom animation instead of default dismissal
-            // Call the closure to notify parent VC
-            self.onMenuItemSelected?(selectedItem)
-            self.dismissSelf()
+            onMenuItemSelected?(selectedItem)
+            dismissSelf()
         }
     }
+
     
     
     private func showLogoutConfirmation() {

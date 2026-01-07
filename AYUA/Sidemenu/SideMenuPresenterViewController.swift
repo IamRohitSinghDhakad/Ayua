@@ -13,7 +13,7 @@ class SideMenuPresenter {
     static func present(from parent: UIViewController,
                         sideMenuIdentifier: String = "SideMenuViewController",
                         storyboardName: String = "Main",
-                        widthFactor: CGFloat = 0.8,
+                        widthFactor: CGFloat = 0.7,
                         configuration: ((SideMenuViewController) -> Void)? = nil) {
         
         let storyboard = UIStoryboard(name: storyboardName, bundle: nil)
@@ -48,17 +48,35 @@ class SideMenuPresenter {
         
         // Set initial frame offscreen
         let menuWidth = parent.view.frame.width * widthFactor
-        sideMenuVC.view.frame = CGRect(x: -menuWidth,
-                                       y: 0,
-                                       width: menuWidth,
-                                       height: parent.view.frame.height)
+        //From Left to Right
+//        sideMenuVC.view.frame = CGRect(x: -menuWidth,
+//                                       y: 0,
+//                                       width: menuWidth,
+//                                       height: parent.view.frame.height)
+//        
+//        parent.present(containerVC, animated: false) {
+//            UIView.animate(withDuration: 0.3, animations: {
+//                sideMenuVC.view.frame.origin.x = 0
+//                dimmedView.alpha = 1
+//            })
+//        }
         
+        //From Right to Left
+        sideMenuVC.view.frame = CGRect(
+            x: parent.view.frame.width,
+            y: 0,
+            width: menuWidth,
+            height: parent.view.frame.height
+        )
+
         parent.present(containerVC, animated: false) {
-            UIView.animate(withDuration: 0.3, animations: {
-                sideMenuVC.view.frame.origin.x = 0
+            UIView.animate(withDuration: 0.3) {
+                sideMenuVC.view.frame.origin.x = parent.view.frame.width - menuWidth
                 dimmedView.alpha = 1
-            })
+            }
         }
+        
+        
     }
 }
 
@@ -70,12 +88,21 @@ extension UIViewController {
             dismiss(animated: false, completion: nil)
             return
         }
-
+        //From Left to Right
+//        UIView.animate(withDuration: 0.3, animations: {
+//            menuView.frame.origin.x = -menuView.frame.width
+//            dimmedView.alpha = 0
+//        }, completion: { _ in
+//            self.dismiss(animated: false, completion: nil)
+//        })
+        
+        //From Right to Left
         UIView.animate(withDuration: 0.3, animations: {
-            menuView.frame.origin.x = -menuView.frame.width
+            menuView.frame.origin.x = self.view.frame.width
             dimmedView.alpha = 0
         }, completion: { _ in
-            self.dismiss(animated: false, completion: nil)
+            self.dismiss(animated: false)
         })
+
     }
 }

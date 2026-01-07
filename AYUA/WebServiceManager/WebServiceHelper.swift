@@ -9,12 +9,13 @@ import Foundation
 import UIKit
 
 
-let BASE_URL = "https://ambitious.in.net/Shubham/linkskill/index.php/api/"//Local
+let BASE_URL = "https://ambitious.in.net/Shubham/ayua/index.php/api/"//Local
 
 struct WsUrl{
     
     static let url_LogIn  = BASE_URL + "login"
-    static let uel_SignUp = BASE_URL + "signup"
+    static let url_SignUp = BASE_URL + "signup"
+    static let url_getBanner = BASE_URL + "get_banners"
     static let url_ForgotPassword = BASE_URL + "forgot_password"
     static let url_getUserProfile  = BASE_URL + "get_profile"
     static let url_getCategory  = BASE_URL + "get_category"
@@ -79,136 +80,173 @@ struct WsParamsType {
 
 
 /*
- package com.ambitious.linkskill.Interface;
-
- import okhttp3.MultipartBody;
- import okhttp3.ResponseBody;
- import retrofit2.Call;
- import retrofit2.http.Multipart;
- import retrofit2.http.POST;
- import retrofit2.http.Part;
- import retrofit2.http.Query;
-
  public interface LoadInterface {
 
      @POST("login")
-     Call<ResponseBody> login(@Query("email") String email,
+     Call<ResponseBody> login(@Query("mobile") String mobile,
                               @Query("password") String password,
                               @Query("type") String type,
                               @Query("device_type") String device_type,
                               @Query("register_id") String device_token,
-                              @Query("language") String language);
+                              @Query("lang") String language);
 
      @POST("forgot_password")
-     Call<ResponseBody> forgot_password(@Query("email") String email,
-                                        @Query("language") String language);
+     Call<ResponseBody> forgot_password(@Query("mobile") String mobile,
+                                        @Query("lang") String language);
 
      @POST("signup")
      Call<ResponseBody> signup(@Query("name") String name,
-                               @Query("email") String email,
                                @Query("mobile") String mobile,
-                               @Query("address") String address,
                                @Query("password") String password,
                                @Query("type") String type,
+                               @Query("category_id") String category_id,
+                               @Query("sub_category_id") String sub_category_id,
                                @Query("device_type") String device_type,
                                @Query("register_id") String device_token,
-                               @Query("language") String language);
+                               @Query("lang") String language);
 
      @POST("verify_otp")
      Call<ResponseBody> verify_otp(@Query("user_id") String user_id,
+                                   @Query("mobile") String mobile,
                                    @Query("otp") String otp,
-                                   @Query("language") String language);
+                                   @Query("lang") String language);
 
      @POST("get_category")
      Call<ResponseBody> get_category(@Query("user_id") String user_id,
-                                     @Query("language") String language);
+                                     @Query("lang") String language);
 
-     @POST("update_profile")
-     Call<ResponseBody> update_profile(@Query("user_id") String user_id,
-                                       @Query("category_id") String category_id,
-                                       @Query("language") String language);
+     @POST("get_sub_category")
+     Call<ResponseBody> get_sub_category(@Query("category_id") String category_id,
+                                         @Query("lang") String language);
 
      @POST("contact_us")
      Call<ResponseBody> contact_us(@Query("user_id") String user_id,
                                    @Query("subject") String subject,
                                    @Query("message") String message,
-                                   @Query("language") String language);
+                                   @Query("lang") String language);
 
      @POST("get_profile")
      Call<ResponseBody> get_profile(@Query("login_user_id") String login_user_id,
-                                    @Query("language") String language);
+                                    @Query("lang") String language);
 
 
      @Multipart
      @POST("update_profile")
      Call<ResponseBody> update_profile(@Query("user_id") String user_id,
                                        @Query("name") String name,
-                                       @Query("email") String email,
                                        @Query("mobile") String mobile,
-                                       @Query("service_rate") String service_rate,
-                                       @Query("country") String country,
-                                       @Query("state") String state,
-                                       @Query("city") String city,
-                                       @Query("zip_code") String zip_code,
-                                       @Query("address") String address,
-                                       @Query("language") String language,
+                                       @Query("password") String password,
+                                       @Query("category_id") String category_id,
+                                       @Query("sub_category_id") String sub_category_id,
+                                       @Query("lang") String language,
                                        @Part MultipartBody.Part body1);
 
+     @POST("get_banners")
+     Call<ResponseBody> get_banner(@Query("lang") String language);
+
+     @Multipart
      @POST("create_job")
      Call<ResponseBody> create_job(@Query("user_id") String user_id,
-                                   @Query("type") String type,
                                    @Query("category_id") String category_id,
-                                   @Query("price") String price,
-                                   @Query("currency") String currency,
-                                   @Query("details") String details,
-                                   @Query("language") String language);
+                                   @Query("sub_category_id") String sub_category_id,
+                                   @Query("detail") String details,
+                                   @Query("address") String address,
+                                   @Query("lat") String lat,
+                                   @Query("lng") String lng,
+                                   @Query("drop_addres") String drop_addres,
+                                   @Query("drop_lat") String drop_lat,
+                                   @Query("drop_lng") String drop_lng,
+                                   @Query("lang") String language,
+                                   @Part MultipartBody.Part body1,
+                                   @Part MultipartBody.Part body2,
+                                   @Part MultipartBody.Part body3,
+                                   @Part MultipartBody.Part body4);
+
+     @POST("get_user_jobs")
+     Call<ResponseBody> get_user_jobs(@Query("job_id") String job_id,
+                                      @Query("user_id") String user_id,
+                                      @Query("status") String status,
+                                      @Query("lang") String language);
+
+     @POST("get_virtual_plans")
+     Call<ResponseBody> get_virtual_plans(@Query("lang") String language);
+
+     @POST("get_membership_plans")
+     Call<ResponseBody> get_membership_plans(@Query("user_id") String user_id,
+                                             @Query("lang") String language);
+
+     @POST("take_coins")
+     Call<ResponseBody> take_coins(@Query("user_id") String user_id,
+                                   @Query("plan_id") String plan_id,
+                                   @Query("lang") String language);
+
+     @POST("take_membership")
+     Call<ResponseBody> take_membership(@Query("user_id") String user_id,
+                                   @Query("plan_id") String plan_id,
+                                   @Query("lang") String language);
+
+     @POST("get_provider_jobs")
+     Call<ResponseBody> get_provider_jobs(@Query("job_id") String job_id,
+                                          @Query("provider_id") String provider_id,
+                                          @Query("status") String status,
+                                          @Query("lat") String lat,
+                                          @Query("lng") String lng,
+                                          @Query("lang") String language);
+
+     @POST("get_provider_jobs")
+     Call<ResponseBody> get_provider_jobs2(@Query("job_id") String job_id,
+                                           @Query("provider_id") String provider_id,
+                                           @Query("lat") String lat,
+                                           @Query("lng") String lng,
+                                           @Query("lang") String language);
 
      @POST("get_jobs")
      Call<ResponseBody> get_jobs(@Query("job_id") String job_id,
                                  @Query("user_id") String user_id,
                                  @Query("employee_id") String employee_id,
                                  @Query("status") String status,
-                                 @Query("language") String language);
+                                 @Query("lang") String language);
 
      @POST("place_bid")
      Call<ResponseBody> place_bid(@Query("job_id") String job_id,
-                                  @Query("employee_id") String employee_id,
+                                  @Query("provider_id") String provider_id,
                                   @Query("bid_amount") String bid_amount,
-                                  @Query("delivery_time") String delivery_time,
+                                  @Query("date") String date,
+                                  @Query("time") String time,
                                   @Query("proposal") String proposal,
-                                  @Query("language") String language);
+                                  @Query("lang") String language);
 
      @POST("get_bids")
      Call<ResponseBody> get_bids(@Query("job_id") String job_id,
-                                 @Query("language") String language);
+                                 @Query("lang") String language);
 
      @POST("update_job_status")
      Call<ResponseBody> update_job_status(@Query("job_id") String job_id,
-                                          @Query("employee_id") String employee_id,
+                                          @Query("provider_id") String provider_id,
                                           @Query("status") String status,
-                                          @Query("language") String language);
+                                          @Query("lang") String language);
 
 
      @POST("create_payment")
      Call<ResponseBody> create_milestone(@Query("job_id") String job_id,
                                          @Query("amount") String amount,
                                          @Query("currency") String currency,
-                                         @Query("language") String language);
+                                         @Query("lang") String language);
 
      @POST("review_rating")
      Call<ResponseBody> review_rating(@Query("job_id") String job_id,
-                                      @Query("user_id") String user_id,
-                                      @Query("employee_id") String employee_id,
+                                      @Query("from") String from,
+                                      @Query("to") String to,
                                       @Query("rating") String rating,
                                       @Query("review") String review,
-                                      @Query("language") String language);
+                                      @Query("lang") String language);
 
 
      @POST("get_chat")
      Call<ResponseBody> getChat(@Query("sender_id") String sender_id,
                                 @Query("receiver_id") String receiver_id,
                                 @Query("job_id") String job_id,
-                                @Query("language") String language);
+                                @Query("lang") String language);
 
      @Multipart
      @POST("insert_chat")
@@ -217,7 +255,7 @@ struct WsParamsType {
                                    @Query("job_id") String job_id,
                                    @Query("chat_message") String chat_message,
                                    @Query("type") String type,
-                                   @Query("language") String language,
+                                   @Query("lang") String language,
                                    @Part MultipartBody.Part body);
 
      @POST("delete_message")
@@ -231,29 +269,24 @@ struct WsParamsType {
 
      @POST("get_conversation")
      Call<ResponseBody> get_conversation(@Query("user_id") String user_id,
-                                         @Query("language") String language);
+                                         @Query("lang") String language);
 
      @POST("get_subscription")
      Call<ResponseBody> get_subscription(@Query("user_id") String user_id,
-                                         @Query("language") String language);
+                                         @Query("lang") String language);
 
-     @POST("take_membership")
-     Call<ResponseBody> take_membership(@Query("user_id") String user_id,
-                                        @Query("plan_id") String plan_id,
-                                        @Query("language") String language);
 
-     @POST("get_review")
-     Call<ResponseBody> get_review(@Query("employee_id") String employee_id,
-                                   @Query("language") String language);
+     @POST("get_rating")
+     Call<ResponseBody> get_rating(@Query("user_id") String user_id,
+                                   @Query("lang") String language);
 
-     @POST("get_wallet")
      @POST("get_wallet")
      Call<ResponseBody> get_wallet(@Query("employee_id") String employee_id,
-                                   @Query("language") String language);
+                                   @Query("lang") String language);
 
      @POST("get_accounts")
      Call<ResponseBody> get_accounts(@Query("user_id") String user_id,
-                                    @Query("language") String language);
+                                     @Query("lang") String language);
 
      @POST("save_account")
      Call<ResponseBody> save_account(@Query("user_id") String user_id,

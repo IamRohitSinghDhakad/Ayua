@@ -28,17 +28,21 @@ class SideMenuManager {
     // MARK: - Default Menu Setup
     private func setupDefaultMenu() {
         menuItems = [
-            MenuItem(title: "Home", storyboardID: "HomeViewController", iconInactive: "home_inactive", iconActive: "home_active"),
-            MenuItem(title: "My Subscription", storyboardID: "MySubscriptionViewController", iconInactive: "profile_inactive", iconActive: "profile_active"),
-            MenuItem(title: "About Us", storyboardID: "AboutViewController", iconInactive: "settings_inactive", iconActive: "settings_active"),
-            MenuItem(title: "Privacy Policy", storyboardID: "PrivacyPolicyViewController", iconInactive: "privacy_inactive", iconActive: "privacy_active"),
-            MenuItem(title: "Important Instructions", storyboardID: "ImportantInstructionViewController", iconInactive: "info_inactive", iconActive: "info_active"),
-            MenuItem(title: "Logout", storyboardID: nil, iconInactive: "logout_inactive", iconActive: "logout_active")
+            MenuItem(title: "HOME".localized(), storyboardID: "HomeViewController", iconInactive: "HOME", iconActive: "HOME"),
+            MenuItem(title: "CHAT".localized(), storyboardID: "ChatViewController", iconInactive: "CHAT", iconActive: "CHAT"),
+            MenuItem(title: "HISTORY".localized(), storyboardID: "AboutViewController", iconInactive: "HISTORY", iconActive: "HISTORY"),
+            MenuItem(title: "MY ACCOUNT".localized(), storyboardID: "AboutViewController", iconInactive: "MY ACCOUNT", iconActive: "MY ACCOUNT"),
+            MenuItem(title: "My REVIEWS".localized(), storyboardID: "AboutViewController", iconInactive: "REVIEW", iconActive: "REVIEW"),
+            MenuItem(title: "LANGUAGE".localized(), storyboardID: "AboutViewController", iconInactive: "language", iconActive: "language"),
+            MenuItem(title: "PRIVACY POLICY", storyboardID: "PrivacyPolicyViewController", iconInactive: "PRIVACY", iconActive: "Privacy Policy"),
+            MenuItem(title: "TERMS & CONDITIONS", storyboardID: "ImportantInstructionViewController", iconInactive: "terms", iconActive: "terms"),
+            MenuItem(title: "CONTACT US", storyboardID: "ImportantInstructionViewController", iconInactive: "contact", iconActive: "contact"),
+            MenuItem(title: "LOGOUT", storyboardID: nil, iconInactive: "logout", iconActive: "logout")
         ]
     }
 
     // MARK: - Show Side Menu
-    func showMenu(from parent: UIViewController, widthFactor: CGFloat = 0.8) {
+    func showMenu(from parent: UIViewController, widthFactor: CGFloat = 0.7) {
 
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         guard let sideMenuVC = storyboard.instantiateViewController(withIdentifier: "SideMenuViewController") as? SideMenuViewController else {
@@ -69,11 +73,27 @@ class SideMenuManager {
         sideMenuVC.didMove(toParent: containerVC)
 
         let menuWidth = parent.view.frame.width * widthFactor
-        sideMenuVC.view.frame = CGRect(x: -menuWidth, y: 0, width: menuWidth, height: parent.view.frame.height)
+        //From Left To Right
+//        sideMenuVC.view.frame = CGRect(x: -menuWidth, y: 0, width: menuWidth, height: parent.view.frame.height)
+//
+//        parent.present(containerVC, animated: false) {
+//            UIView.animate(withDuration: 0.3) {
+//                sideMenuVC.view.frame.origin.x = 0
+//                dimmedView.alpha = 1
+//            }
+//        }
+        
+        //From Right To Left
+        sideMenuVC.view.frame = CGRect(
+            x: parent.view.frame.width,
+            y: 0,
+            width: menuWidth,
+            height: parent.view.frame.height
+        )
 
         parent.present(containerVC, animated: false) {
             UIView.animate(withDuration: 0.3) {
-                sideMenuVC.view.frame.origin.x = 0
+                sideMenuVC.view.frame.origin.x = parent.view.frame.width - menuWidth
                 dimmedView.alpha = 1
             }
         }

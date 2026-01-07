@@ -18,13 +18,13 @@ class LoginViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        if self.strType == UserInfoType.Employee.rawValue{
-//            self.tfEmail.text = "employee@gmail.com"
-//            self.tfPassword.text = "12345"
-//        }else{
-//            self.tfEmail.text = "employer@gmail.com"
-//            self.tfPassword.text = "12345"
-//        }
+        if self.strType == UserInfoType.User.rawValue{
+            self.tfMobile.text = "8871179252"
+            self.tfPassword.text = "12345"
+        }else{
+            self.tfMobile.text = "8839902727"
+            self.tfPassword.text = "12345"
+        }
     }
     
     @IBAction func btnOnBack(_ sender: Any) {
@@ -42,12 +42,6 @@ class LoginViewController: UIViewController {
             tfPassword.insertText(existingText)
         }
         
-        // Optionally update button icon or title
-        if sender.isSelected {
-            sender.setImage(UIImage(named: "icon_hide_password"), for: .normal) // eye-slash
-        } else {
-            sender.setImage(UIImage(named: "icon_show_password"), for: .normal) // eye
-        }
     }
     
     @IBAction func btnOnforgetPassword(_ sender: Any) {
@@ -55,24 +49,14 @@ class LoginViewController: UIViewController {
     }
     
     @IBAction func btnOnLogin(_ sender: Any) {
-        setRootController()
-//        guard let email = tfMobile.text?.trimmingCharacters(in: .whitespacesAndNewlines), !email.isEmpty else {
-//            showAlert(message: "please_enter_email")
-//            return
-//        }
-//        
-//        guard isValidEmail(email) else {
-//            showAlert(message: "please_enter_valid_email")
-//            return
-//        }
-//        
-//        guard let password = tfPassword.text?.trimmingCharacters(in: .whitespacesAndNewlines), !password.isEmpty else {
-//            showAlert(message: "please_enter_password")
-//            return
-//        }
+      
+        guard let password = tfPassword.text?.trimmingCharacters(in: .whitespacesAndNewlines), !password.isEmpty else {
+            showAlert(message: "please_enter_password")
+            return
+        }
         
-        // ✅ Passed validation → call API
-       // self.call_Websercice_Login()
+
+        self.call_Websercice_Login()
     }
     
     func showAlert(message: String) {
@@ -82,11 +66,7 @@ class LoginViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "ok".localized(), style: .default, handler: nil))
         self.present(alert, animated: true, completion: nil)
     }
-    func isValidEmail(_ email: String) -> Bool {
-        let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
-        let emailPred = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
-        return emailPred.evaluate(with: email)
-    }
+  
     
     @IBAction func btnOnSignUp(_ sender: Any) {
         let vc = self.storyboard?.instantiateViewController(withIdentifier: "SignUpViewController") as! SignUpViewController
@@ -106,7 +86,7 @@ extension LoginViewController {
         
         objWebServiceManager.showIndicator()
         
-        let dictParam = ["email": self.tfMobile.text!,
+        let dictParam = ["mobile": self.tfMobile.text!,
                          "password": self.tfPassword.text!,
                          "device_type": "iOS",
                          "register_id": objAppShareData.strFirebaseToken,
@@ -127,7 +107,7 @@ extension LoginViewController {
                     objAppShareData.SaveUpdateUserInfoFromAppshareData(userDetail: resultArray)
                     objAppShareData.fetchUserInfoFromAppshareData()
                     
-                    if objAppShareData.UserDetail.type == "Employee"{
+                    if objAppShareData.UserDetail.type == "User"{
                         self.setRootController()
                     }else{
                         self.setRootControllerEmployer()

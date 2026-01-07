@@ -7,8 +7,8 @@
 
 import UIKit
 enum UserInfoType: String {
-    case Employee
-    case Employer
+    case User
+    case Provider
 }
 
 class WelcomeScreenViewController: UIViewController {
@@ -21,13 +21,13 @@ class WelcomeScreenViewController: UIViewController {
     
     @IBAction func btnOnSerchForHelp(_ sender: Any) {
         let vc = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
-        vc.strType = UserInfoType.Employee.rawValue
+        vc.strType = UserInfoType.User.rawValue
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
     @IBAction func btnOnToOfferMyService(_ sender: Any) {
         let vc = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
-        vc.strType = UserInfoType.Employer.rawValue
+        vc.strType = UserInfoType.Provider.rawValue
         self.navigationController?.pushViewController(vc, animated: true)
     }
 

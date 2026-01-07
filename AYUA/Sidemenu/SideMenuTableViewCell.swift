@@ -10,18 +10,26 @@ import UIKit
 class SideMenuTableViewCell: UITableViewCell {
 
     
+    @IBOutlet weak var imgVw: UIImageView!
     @IBOutlet weak var lblTitle: UILabel!
     
     
     override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
-    }
+           super.awakeFromNib()
+           selectionStyle = .none
+       }
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
+       func configure(
+           with item: MenuItem,
+           isSelected: Bool
+       ) {
+           lblTitle.text = item.title
 
-        // Configure the view for the selected state
-    }
+           let imageName = isSelected ? item.iconActive : item.iconInactive
+           imgVw.image = UIImage(named: imageName ?? "")
 
-}
+           // Optional styling
+           lblTitle.textColor = isSelected ? .white : .black
+           contentView.backgroundColor = isSelected ? UIColor(hex: "#1D1529") : .white
+       }
+   }
