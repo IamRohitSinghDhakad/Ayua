@@ -10,10 +10,8 @@ import UIKit
 class SignUpViewController: UIViewController {
 
     @IBOutlet weak var tfUserName: UITextField!
-    @IBOutlet weak var tfEmail: UITextField!
-    @IBOutlet weak var tfMobile: UITextField!
+    @IBOutlet weak var tfMobileNumber: UITextField!
     @IBOutlet weak var tfPassword: UITextField!
-    @IBOutlet weak var tfAddress: UITextField!
     
     var strType:String = ""
     
@@ -47,7 +45,7 @@ extension SignUpViewController {
         }
 
         // Email
-        guard let email = tfEmail.text, !email.isEmpty else {
+        guard let email = tfMobileNumber.text, !email.isEmpty else {
             objAlert.showAlert(message: "Please enter your email.", title: "Alert", controller: self)
             return false
         }
@@ -58,7 +56,7 @@ extension SignUpViewController {
         }
 
         // Mobile
-        guard let mobile = tfMobile.text, !mobile.isEmpty else {
+        guard let mobile = tfMobileNumber.text, !mobile.isEmpty else {
             objAlert.showAlert(message: "Please enter mobile number.", title: "Alert", controller: self)
             return false
         }
@@ -67,13 +65,6 @@ extension SignUpViewController {
         // Password
         guard let password = tfPassword.text, !password.isEmpty else {
             objAlert.showAlert(message: "Please enter password.", title: "Alert", controller: self)
-            return false
-        }
-
-
-        // Address
-        guard let address = tfAddress.text, !address.isEmpty else {
-            objAlert.showAlert(message: "Please enter address.", title: "Alert", controller: self)
             return false
         }
 
@@ -99,9 +90,7 @@ extension SignUpViewController {
         objWebServiceManager.showIndicator()
         
         let dictParam = ["name": self.tfUserName.text!,
-            "email": self.tfEmail.text!,
-                         "mobile": self.tfMobile.text!,
-                         "address": self.tfAddress.text!,
+                         "mobile": self.tfMobileNumber.text!,
                          "password": self.tfPassword.text!,
                          "device_type": "iOS",
                          "register_id": objAppShareData.strFirebaseToken,
@@ -145,18 +134,18 @@ extension SignUpViewController {
     func setRootController() {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let homeViewController = mainStoryboard.instantiateViewController(withIdentifier: "TabBarViewController") as! TabBarViewController
-        let navController = UINavigationController(rootViewController: homeViewController)
-        navController.navigationBar.isHidden = true
-        appDelegate.window?.rootViewController = navController
+//        let homeViewController = mainStoryboard.instantiateViewController(withIdentifier: "TabBarViewController") as! TabBarViewController
+//        let navController = UINavigationController(rootViewController: homeViewController)
+//        navController.navigationBar.isHidden = true
+//        appDelegate.window?.rootViewController = navController
     }
     
     func setRootControllerEmployer() {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let homeViewController = mainStoryboard.instantiateViewController(withIdentifier: "TabBarEmployerViewController") as! TabBarEmployerViewController
-        let navController = UINavigationController(rootViewController: homeViewController)
-        navController.navigationBar.isHidden = true
-        appDelegate.window?.rootViewController = navController
+//        let homeViewController = mainStoryboard.instantiateViewController(withIdentifier: "TabBarEmployerViewController") as! TabBarEmployerViewController
+//        let navController = UINavigationController(rootViewController: homeViewController)
+//        navController.navigationBar.isHidden = true
+//        appDelegate.window?.rootViewController = navController
     }
 }
