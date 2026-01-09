@@ -30,13 +30,13 @@ class SideMenuManager {
         menuItems = [
             MenuItem(title: "HOME".localized(), storyboardID: "HomeViewController", iconInactive: "HOME", iconActive: "HOME"),
             MenuItem(title: "CHAT".localized(), storyboardID: "ChatViewController", iconInactive: "CHAT", iconActive: "CHAT"),
-            MenuItem(title: "HISTORY".localized(), storyboardID: "AboutViewController", iconInactive: "HISTORY", iconActive: "HISTORY"),
-            MenuItem(title: "MY ACCOUNT".localized(), storyboardID: "AboutViewController", iconInactive: "MY ACCOUNT", iconActive: "MY ACCOUNT"),
-            MenuItem(title: "My REVIEWS".localized(), storyboardID: "AboutViewController", iconInactive: "REVIEW", iconActive: "REVIEW"),
-            MenuItem(title: "LANGUAGE".localized(), storyboardID: "AboutViewController", iconInactive: "language", iconActive: "language"),
+            MenuItem(title: "HISTORY".localized(), storyboardID: "HistoryViewController", iconInactive: "HISTORY", iconActive: "HISTORY"),
+            MenuItem(title: "MY ACCOUNT".localized(), storyboardID: "MyAccountViewController", iconInactive: "MY ACCOUNT", iconActive: "MY ACCOUNT"),
+            MenuItem(title: "My REVIEWS".localized(), storyboardID: "MyReviewsViewController", iconInactive: "REVIEW", iconActive: "REVIEW"),
+            MenuItem(title: "LANGUAGE".localized(), storyboardID: "LanguageViewController", iconInactive: "language", iconActive: "language"),
             MenuItem(title: "PRIVACY POLICY", storyboardID: "PrivacyPolicyViewController", iconInactive: "PRIVACY", iconActive: "Privacy Policy"),
-            MenuItem(title: "TERMS & CONDITIONS", storyboardID: "ImportantInstructionViewController", iconInactive: "terms", iconActive: "terms"),
-            MenuItem(title: "CONTACT US", storyboardID: "ImportantInstructionViewController", iconInactive: "contact", iconActive: "contact"),
+            MenuItem(title: "TERMS & CONDITIONS", storyboardID: "PrivacyPolicyViewController", iconInactive: "terms", iconActive: "terms"),
+            MenuItem(title: "CONTACT US", storyboardID: "ContactUsViewController", iconInactive: "contact", iconActive: "contact"),
             MenuItem(title: "LOGOUT", storyboardID: nil, iconInactive: "logout", iconActive: "logout")
         ]
     }
