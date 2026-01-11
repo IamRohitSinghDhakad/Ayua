@@ -28,7 +28,7 @@ class EmployeeReviewModel: NSObject {
             avgRating = ""
         }
         
-        if let value = dictionary["employee_image"] as? String {
+        if let value = dictionary["reviewer_profile"] as? String {
             employeeImage = value
         } else {
             employeeImage = ""
@@ -107,7 +107,7 @@ class MyReviewModel: NSObject {
                reviewerName = ""
            }
            
-           if let value = dictionary["reviewer_image"] as? String {
+           if let value = dictionary["reviewer_profile"] as? String {
                reviewerImage = value
            } else {
                reviewerImage = ""

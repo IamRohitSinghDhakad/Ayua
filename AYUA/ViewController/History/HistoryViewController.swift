@@ -170,6 +170,25 @@ extension HistoryViewController: UITableViewDelegate, UITableViewDataSource {
                 for: indexPath
             ) as! AcceptedTableViewCell
 
+            cell.imgVwUser.sd_setImage(
+                with: URL(string: job.providerProfile),
+                placeholderImage: UIImage(named: "logo")
+            )
+            cell.lblUserName.text = job.providerName
+            cell.lblrating.text = job.providerRating
+            cell.lbldetail.text = job.detail
+            cell.lblAwatrded.text = "Awarded"
+            
+            // Collect images safely
+               let images = [
+                   job.image1,
+                   job.image2,
+                   job.image3,
+                   job.image4
+               ].filter { !$0.isEmpty }
+
+               cell.configureImages(images)
+            
             // configure accepted cell
             return cell
 
@@ -202,7 +221,21 @@ extension HistoryViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        let obj = arrJobs[indexPath.row]
+        
+        if obj.status == "Pending" {
+            let vc = self.storyboard?.instantiateViewController(withIdentifier: "ProfessionalViewController") as! ProfessionalViewController
+            vc.objJobDetails = arrJobs[indexPath.row]
+            self.navigationController?.pushViewController(vc, animated: true)
+        }else{
+            let vc = self.storyboard?.instantiateViewController(withIdentifier: "JobDetailViewController") as! JobDetailViewController
+            vc.objJob = arrJobs[indexPath.row]
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+        
     }
+        
 }
 
 

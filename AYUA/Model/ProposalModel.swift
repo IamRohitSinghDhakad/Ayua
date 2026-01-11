@@ -8,155 +8,115 @@ import Foundation
 
 class BidProposalModel: NSObject {
     
-    var price: Double?
-    var currency: String?
-    var deliveryTime: String?
-    var employeeEmail: String?
-    var employeeId: String?
-    var employeeMobile: String?
-    var employeeName: String?
-    var employeeProfile: String?
-    var entryDate: String?
     var id: String?
     var jobId: String?
+    var providerId: String?
+    
+    var price: Double?
+    var deliveryTime: String?
     var proposal: String?
+    var status: String?
+    
+    var date: String?
+    var time: String?
+    var entryDate: String?
+    
+    var providerName: String?
+    var providerEmail: String?
+    var providerMobile: String?
+    var providerProfile: String?
+    
+    var categoryId: String?
+    var subCategoryId: String?
+    var category: String?
+    var subCategory: String?
+    
     var rating: String?
     var reviewCount: String?
-    var status: String?
-    var type: String?
+    var completedJobs: String?
     
     init(from dictionary: [String: Any]) {
         super.init()
         
-        // MARK: - Bid Amount
-        // MARK: - Price
-        if let value = dictionary["bid_amount"] as? Double {
-            price = value
-        } else if let value = dictionary["bid_amount"] as? Int {
-            price = Double(value)
-        } else if let value = dictionary["bid_amount"] as? String, let doubleVal = Double(value) {
-            price = doubleVal
-        } else {
-            price = 0.0
-        }
-        
-        // MARK: - Currency
-        if let value = dictionary["currency"] as? String {
-            currency = value
-        } else {
-            currency = ""
-        }
-        
-        // MARK: - Delivery Time
-        if let value = dictionary["delivery_time"] as? Int {
-            deliveryTime = "\(value)"
-        } else if let value = dictionary["delivery_time"] as? String {
-            deliveryTime = value
-        } else {
-            deliveryTime = ""
-        }
-        
-        // MARK: - Employee Email
-        if let value = dictionary["employee_email"] as? String {
-            employeeEmail = value
-        } else {
-            employeeEmail = ""
-        }
-        
-        // MARK: - Employee ID
-        if let value = dictionary["employee_id"] as? Int {
-            employeeId = "\(value)"
-        } else if let value = dictionary["employee_id"] as? String {
-            employeeId = value
-        } else {
-            employeeId = ""
-        }
-        
-        // MARK: - Employee Mobile
-        if let value = dictionary["employee_mobile"] as? Int {
-            employeeMobile = "\(value)"
-        } else if let value = dictionary["employee_mobile"] as? String {
-            employeeMobile = value
-        } else {
-            employeeMobile = ""
-        }
-        
-        // MARK: - Employee Name
-        if let value = dictionary["employee_name"] as? String {
-            employeeName = value
-        } else {
-            employeeName = ""
-        }
-        
-        // MARK: - Employee Profile
-        if let value = dictionary["employee_profile"] as? String {
-            employeeProfile = value
-        } else {
-            employeeProfile = ""
-        }
-        
-        // MARK: - Entry Date
-        if let value = dictionary["entrydt"] as? String {
-            entryDate = value
-        } else {
-            entryDate = ""
-        }
-        
         // MARK: - ID
-        if let value = dictionary["id"] as? Int {
+        if let value = dictionary["id"] {
             id = "\(value)"
-        } else if let value = dictionary["id"] as? String {
-            id = value
         } else {
             id = ""
         }
         
         // MARK: - Job ID
-        if let value = dictionary["job_id"] as? Int {
+        if let value = dictionary["job_id"] {
             jobId = "\(value)"
-        } else if let value = dictionary["job_id"] as? String {
-            jobId = value
         } else {
             jobId = ""
         }
         
-        // MARK: - Proposal
-        if let value = dictionary["proposal"] as? String {
-            proposal = value
+        // MARK: - Provider ID
+        if let value = dictionary["provider_id"] {
+            providerId = "\(value)"
         } else {
-            proposal = ""
+            providerId = ""
         }
         
-        // MARK: - Rating
-        if let value = dictionary["rating"] as? String {
-            rating = value
-        } else if let value = dictionary["rating"] as? Double {
+        // MARK: - Bid Amount
+        if let value = dictionary["bid_amount"] as? Double {
+            price = value
+        } else if let value = dictionary["bid_amount"] as? String,
+                  let doubleVal = Double(value) {
+            price = doubleVal
+        } else {
+            price = 0.0
+        }
+        
+        // MARK: - Delivery Time
+        if let value = dictionary["delivery_time"] {
+            deliveryTime = "\(value)"
+        } else {
+            deliveryTime = ""
+        }
+        
+        // MARK: - Proposal
+        proposal = dictionary["proposal"] as? String ?? ""
+        
+        // MARK: - Status
+        status = dictionary["status"] as? String ?? ""
+        
+        // MARK: - Date & Time
+        date = dictionary["date"] as? String ?? ""
+        time = dictionary["time"] as? String ?? ""
+        entryDate = dictionary["entrydt"] as? String ?? ""
+        
+        // MARK: - Provider Info
+        providerName = dictionary["provider_name"] as? String ?? ""
+        providerEmail = dictionary["provider_email"] as? String ?? ""
+        providerMobile = dictionary["provider_mobile"] as? String ?? ""
+        providerProfile = dictionary["provider_profile"] as? String ?? ""
+        
+        // MARK: - Category
+        categoryId = dictionary["category_id"] as? String ?? ""
+        subCategoryId = dictionary["sub_category_id"] as? String ?? ""
+        category = dictionary["category"] as? String ?? ""
+        subCategory = dictionary["sub_category"] as? String ?? ""
+        
+        // MARK: - Rating & Reviews
+        if let value = dictionary["rating"] {
             rating = "\(value)"
         } else {
             rating = ""
         }
         
-        // MARK: - Review Count
-        if let value = dictionary["review_count"] as? Int {
+        if let value = dictionary["review_count"] {
             reviewCount = "\(value)"
-        } else if let value = dictionary["review_count"] as? String {
-            reviewCount = value
         } else {
             reviewCount = ""
         }
         
-        // MARK: - Status
-        if let value = dictionary["status"] as? String {
-            status = value
+        // MARK: - Completed Jobs
+        if let value = dictionary["completed_jobs"] {
+            completedJobs = "\(value)"
         } else {
-            status = ""
-        }
-        
-        // MARK: - Type
-        if let value = dictionary["type"] as? String {
-            type = value
-        } else {
-            type = ""
+            completedJobs = ""
         }
     }
 }

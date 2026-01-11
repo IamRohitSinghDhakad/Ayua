@@ -23,7 +23,7 @@ struct WsUrl{
     static let url_place_bid  = BASE_URL + "place_bid"
     static let url_get_wallet  = BASE_URL + "get_wallet"
     static let url_get_subscription  = BASE_URL + "get_subscription"
-    static let url_get_review  = BASE_URL + "get_review"
+    static let url_get_review  = BASE_URL + "get_rating"
     static let url_update_profile  = BASE_URL + "update_profile"
     static let url_contact_us  = BASE_URL + "contact_us"
     

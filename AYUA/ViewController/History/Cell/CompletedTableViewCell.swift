@@ -26,6 +26,7 @@ class CompletedTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
+        self.vwServices.isHidden = true
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

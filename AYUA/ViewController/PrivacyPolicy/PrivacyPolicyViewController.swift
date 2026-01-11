@@ -6,16 +6,23 @@
 //
 
 import UIKit
+import WebKit
 
 class PrivacyPolicyViewController: UIViewController {
 
+    @IBOutlet weak var lblHeader: UILabel!
+    @IBOutlet weak var webVw: WKWebView!
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
     }
     
-
+    @IBAction func btnOnOpenSideMenu(_ sender: Any) {
+    }
+    
     /*
     // MARK: - Navigation
 

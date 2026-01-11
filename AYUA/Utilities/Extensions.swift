@@ -589,3 +589,54 @@ extension UIViewController {
         self.present(activityViewController, animated: true, completion: nil)
     }
 }
+
+
+extension String {
+    
+    func dateComponents() -> (dayName: String,
+                              day: String,
+                              month: String,
+                              year: String)? {
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        
+        guard let date = dateFormatter.date(from: self) else {
+            return nil
+        }
+        
+        let calendar = Calendar.current
+        
+        // Day name 
+        let dayNameFormatter = DateFormatter()
+        dayNameFormatter.dateFormat = "EEEE"
+        let dayName = dayNameFormatter.string(from: date)
+        
+        // Day
+        let day = String(calendar.component(.day, from: date))
+        
+        // Month
+        let monthFormatter = DateFormatter()
+        monthFormatter.dateFormat = "MMMM"
+        let month = monthFormatter.string(from: date)
+        
+        // Year
+        let year = String(calendar.component(.year, from: date))
+        
+        return (dayName, day, month, year)
+    }
+    
+    func splitTime() -> (time: String, period: String?) {
+           
+           let components = self.split(separator: " ")
+           
+           if components.count == 2 {
+               // Format: "5:40 AM"
+               return (time: String(components[0]), period: String(components[1]))
+           } else {
+               // Format: "09:00:000" or any other format
+               return (time: self, period: nil)
+           }
+       }
+}
