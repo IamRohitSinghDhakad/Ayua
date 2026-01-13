@@ -20,25 +20,42 @@ class HomeViewController: UIViewController {
     @IBOutlet weak var imgVwTwo: UIImageView!
     @IBOutlet weak var imgVwThree: UIImageView!
     @IBOutlet weak var imgVwFour: UIImageView!
+    @IBOutlet weak var subVw: UIView!
+    @IBOutlet weak var tblvw: UITableView!
+    @IBOutlet weak var tfSearch: UITextField!
     
     private var arrImages: [BannerModel] = []
     var arrCategory = [CategoryModel]()
-
+    
+    var arrSubCategory = [SubCategoryModel]()
+    var filteredSubCategory = [SubCategoryModel]()
+    var selectedIds = ""
+    var selectedNames = ""
+    
        private var currentIndex: Int = 0
        private var timer: Timer?
 
        override func viewDidLoad() {
            super.viewDidLoad()
+           self.tblvw.delegate = self
+           self.tblvw.dataSource = self
            setupCollectionView()
            startAutoScroll()
            call_Websercice_GetProfile()
            call_Websercice_GetBanners()
            call_WebService_GetCategory()
+           
+           tfSearch.addTarget(self, action: #selector(searchTextChanged(_:)), for: .editingChanged)
        }
 
        deinit {
            timer?.invalidate()
        }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.subVw.isHidden = true
+    }
 
     @IBAction func btnOpenSideMenu(_ sender: Any) {
         SideMenuManager.shared.showMenu(from: self)
@@ -48,7 +65,7 @@ class HomeViewController: UIViewController {
         
     }
     @IBAction func btnOpenSelectServiceType(_ sender: Any) {
-        
+        self.subVw.isHidden = false
     }
     
     @IBAction func openImageView(_ sender: UIButton) {
@@ -67,6 +84,82 @@ class HomeViewController: UIViewController {
     }
     
     @IBAction func openLoactionView(_ sender: Any) {
+        
+    }
+    
+    @IBAction func btnOnCloseSubVw(_ sender: Any) {
+        for i in 0..<arrCategory.count {
+            arrCategory[i].isSelected = 0
+        }
+        filteredSubCategory = arrSubCategory
+        tblvw.reloadData()
+        self.subVw.isHidden = true
+    }
+    
+    
+    @IBAction func btnOnDone(_ sender: Any) {
+        let selected = arrSubCategory.filter { $0.isSelected == 1 }
+        
+        // Get comma-separated strings
+        selectedIds = selected.compactMap { $0.id }.joined(separator: ",")
+        selectedNames = selected.compactMap { $0.name }.joined(separator: ", ")
+        
+        // Set names to textfield
+        lblSelectedServices.text = selectedNames
+        
+        print("✅ Selected IDs: \(selectedIds)")
+        print("✅ Selected Names: \(selectedNames)")
+        
+        self.subVw.isHidden = true
+    }
+    
+    @objc private func searchTextChanged(_ textField: UITextField) {
+        let searchText = textField.text?.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() ?? ""
+        
+        if searchText.isEmpty {
+            filteredSubCategory = arrSubCategory
+        } else {
+            filteredSubCategory = arrSubCategory.filter {
+                $0.name?.lowercased().contains(searchText) ?? false
+            }
+        }
+        tblvw.reloadData()
+    }
+}
+
+extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return filteredSubCategory.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "AddPostTableViewCell", for: indexPath) as? AddPostTableViewCell else {
+            return UITableViewCell()
+        }
+        
+        let obj = filteredSubCategory[indexPath.row]
+        cell.lblName.text = obj.name
+        cell.imgVwTick.isHidden = (obj.isSelected == 0)
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        // Get selected item from filtered list
+        let selectedObj = filteredSubCategory[indexPath.row]
+        
+        // Toggle its selection state
+        selectedObj.isSelected = (selectedObj.isSelected == 1) ? 0 : 1
+        
+        // Update both filtered and main array consistently
+        filteredSubCategory[indexPath.row] = selectedObj
+        
+        if let indexInMain = arrCategory.firstIndex(where: { $0.id == selectedObj.id }) {
+            arrCategory[indexInMain].isSelected = selectedObj.isSelected
+        }
+        
+        // Reload only this cell for smooth performance
+        tblvw.reloadRows(at: [indexPath], with: .fade)
     }
     
 }
@@ -179,6 +272,7 @@ extension HomeViewController: UICollectionViewDataSource {
         guard collectionView == cvCategory else { return }
 
         selectedCategoryIndex = indexPath.item
+        self.call_WebService_GetSubCategory(strSelectedCategoryID: self.arrCategory[self.selectedCategoryIndex].id ?? "")
         cvCategory.reloadData()
     }
 
@@ -350,10 +444,47 @@ extension HomeViewController {
                   
                    self.selectedCategoryIndex = 0
                    self.cvCategory.reloadData()
-
-
-
                    
+                   self.call_WebService_GetSubCategory(strSelectedCategoryID: self.arrCategory[self.selectedCategoryIndex].id ?? "")
+
+               } else {
+                   let message = response["message"] as? String ?? "Something went wrong"
+                   objAlert.showAlert(message: message, title: "Alert", controller: self)
+               }
+           } failure: { error in
+               objWebServiceManager.hideIndicator()
+               print("❌ Error:", error)
+           }
+       }
+    
+    
+    func call_WebService_GetSubCategory(strSelectedCategoryID: String) {
+           guard objWebServiceManager.isNetworkAvailable() else {
+               objAlert.showAlert(message: "No Internet Connection", title: "Alert", controller: self)
+               return
+           }
+           
+          // objWebServiceManager.showIndicator()
+           
+           let dictParam: [String: Any] = [
+               "category_id": strSelectedCategoryID,
+               "lang": objAppShareData.currentLanguage
+           ]
+        print(dictParam)
+           
+           objWebServiceManager.requestPost(strURL: WsUrl.url_getSubCategory, queryParams: [:], params: dictParam, strCustomValidation: "", showIndicator: false) { (response) in
+               objWebServiceManager.hideIndicator()
+               print(response)
+               let status = response["status"] as? Int
+               if status == MessageConstant.k_StatusCode,
+                  let resultArray = response["result"] as? [[String: Any]] {
+                   
+                   self.arrSubCategory.removeAll()
+                   self.filteredSubCategory.removeAll()
+                   
+                   self.arrSubCategory = resultArray.map { SubCategoryModel(from: $0) }
+                   self.filteredSubCategory = self.arrSubCategory
+                   self.tblvw.reloadData()
                } else {
                    let message = response["message"] as? String ?? "Something went wrong"
                    objAlert.showAlert(message: message, title: "Alert", controller: self)
