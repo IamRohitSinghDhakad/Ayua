@@ -20,6 +20,7 @@ class CompletedTableViewCell: UITableViewCell {
     @IBOutlet weak var imgVwUser: UIImageView!
     @IBOutlet weak var lblAwatrded: UILabel!
     @IBOutlet weak var lblrating: UILabel!
+    @IBOutlet weak var lblStatus: UILabel!
     
     
     

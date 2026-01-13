@@ -23,8 +23,6 @@ class ProfessionalViewController: UIViewController {
         
         self.call_WebService_GetJobs(strJobID: objJobDetails?.jobId ?? "")
     }
-    
-
    
     @IBAction func btnOnBack(_ sender: Any) {
         self.onBackPressed()
@@ -55,6 +53,15 @@ extension ProfessionalViewController: UITableViewDelegate, UITableViewDataSource
         cell.btnOnChat.addTarget(self, action: #selector(btnOnChatTapped(_:)), for: .touchUpInside)
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        let obj = self.arrBidProposalModel[indexPath.row]
+        
+        let vc = self.mainStoryboard.instantiateViewController(withIdentifier: "UsersReviewViewController")as! UsersReviewViewController
+        vc.provideID = obj.providerId ?? ""
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc func btnOnChatTapped(_ sender: UIButton) {
@@ -108,9 +115,9 @@ extension ProfessionalViewController {
                    self.tblVw.reloadData()
                 }
             }else{
-                objAlert.showAlert(message: message ?? "", title: "Alert", controller: self)
+               // objAlert.showAlert(message: message ?? "", title: "Alert", controller: self)
                 if self.arrBidProposalModel.count == 0{
-                    self.tblVw.displayBackgroundText(text: "No Jobs Available", fontStyle: "ABeeZee-Regular", fontSize: 22)
+                    self.tblVw.displayBackgroundText(text: "No offer found", fontStyle: "ABeeZee-Regular", fontSize: 22)
                 }else {
                     self.tblVw.displayBackgroundText(text: "")
                 }

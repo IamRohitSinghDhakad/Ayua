@@ -6,24 +6,136 @@
 //
 
 import UIKit
+import SDWebImage
 
 class UsersReviewViewController: UIViewController {
-
+    
+    
+    @IBOutlet weak var imgVwUser: UIImageView!
+    @IBOutlet weak var tblVw: UITableView!
+    @IBOutlet weak var lblUserName: UILabel!
+    @IBOutlet weak var vwRatings: FloatRatingView!
+    @IBOutlet weak var lblServices: UILabel!
+    @IBOutlet weak var lblratingCount: UILabel!
+    
+    var arrReviews = [ProviderReviewItem]()
+    var obj = ProviderReviewModel(from: [:])
+    var provideID: String = ""
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        
+        self.tblVw.delegate = self
+        self.tblVw.dataSource = self
+        
+        call_WebService_MyReviews()
+        
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    @IBAction func btnOnBack(_ sender: Any) {
+        self.onBackPressed()
     }
-    */
-
+    
+    
 }
+
+extension UsersReviewViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.arrReviews.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "MyReviewTableViewCell") as! MyReviewTableViewCell
+        let obj = self.arrReviews[indexPath.row]
+        cell.lblUserName.text = obj.reviewerName
+        cell.lblDate.text = obj.entryDate
+        cell.vwRatings.rating = Double(obj.rating) ?? 0.0
+        
+        cell.imgVwUser.sd_setImage(with: URL(string: obj.reviewerProfile), placeholderImage: UIImage(named: "logo"))
+        cell.lblDesc.text = obj.review
+        
+        return cell
+    }
+}
+
+extension UsersReviewViewController {
+    
+    func call_WebService_MyReviews() {
+        
+        if !objWebServiceManager.isNetworkAvailable() {
+            objWebServiceManager.hideIndicator()
+            objAlert.showAlert(message: "No Internet Connection", title: "Alert", controller: self)
+            return
+        }
+        
+        objWebServiceManager.showIndicator()
+        
+        let dictParam: [String: Any] = [
+            "user_id": self.provideID,
+            "lang": objAppShareData.currentLanguage
+        ]
+        
+        print(dictParam)
+        
+        objWebServiceManager.requestPost(
+            strURL: WsUrl.url_get_review,
+            queryParams: [:],
+            params: dictParam,
+            strCustomValidation: "",
+            showIndicator: false
+        ) { response in
+            
+            objWebServiceManager.hideIndicator()
+            
+            let status = response["status"] as? Int
+            let message = response["message"] as? String
+            
+            if status == MessageConstant.k_StatusCode {
+                
+                if let responseDict = response as? [String: Any] {
+                    print(responseDict)
+                    
+                    // Initialize main review model
+                    self.obj = ProviderReviewModel(from: responseDict)
+                    
+                    self.lblUserName.text = self.obj.userName
+                    self.vwRatings.rating = Double(self.obj.averageRating) ?? 0.0
+                    self.lblratingCount.text = "(\(self.obj.averageRating))"
+                    self.imgVwUser.sd_setImage(with: URL(string: self.obj.profileImage), placeholderImage: UIImage(named: "logo"))
+                    
+                    // Clear and reload data
+                    self.arrReviews.removeAll()
+                    
+                    if let resultArray = responseDict["result"] as? [[String: Any]] {
+                        for dataDict in resultArray {
+                            let review = ProviderReviewItem(from: dataDict)
+                            self.arrReviews.append(review)
+                        }
+                    }
+                    
+                    if self.arrReviews.isEmpty {
+                        self.tblVw.displayBackgroundText(text: "No Reviews Available")
+                    } else {
+                        self.tblVw.displayBackgroundText(text: "")
+                    }
+                    
+                    self.tblVw.reloadData()
+                    
+                } else {
+                    objAlert.showAlert(message: message ?? "", title: "Alert", controller: self)
+                }
+                
+            } else {
+                objAlert.showAlert(message: message ?? "", title: "Alert", controller: self)
+            }
+            
+        } failure: { error in
+            objWebServiceManager.hideIndicator()
+            print("Error: \(error)")
+        }
+    }
+}
+
+
+
+

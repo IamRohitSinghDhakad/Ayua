@@ -40,7 +40,7 @@ class HistoryViewController: UIViewController {
     }
 
     @IBAction func btnOpenSideMenu(_ sender: Any) {
-
+        SideMenuManager.shared.showMenu(from: self)
     }
 
     @IBAction func btnPending(_ sender: Any) {
@@ -204,7 +204,8 @@ extension HistoryViewController: UITableViewDelegate, UITableViewDataSource {
             )
             cell.lblUserName.text = job.providerName
             cell.lblrating.text = job.providerRating
-            cell.lblAwatrded.text = job.subCategoryName
+            cell.lblAwatrded.text = "Completed"//job.subCategoryName
+            cell.lblStatus.text = job.subCategoryName
             cell.lblDetail.text = job.detail
             
             if job.dropAddress.isEmpty {

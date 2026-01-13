@@ -27,7 +27,9 @@ class JobDetailViewController: UIViewController {
     @IBOutlet weak var lblAmount: UILabel!
     @IBOutlet weak var vwButtons: UIView!
     @IBOutlet weak var vwPayOnService: UIView!
-
+    @IBOutlet weak var lblAmPM: UILabel!
+    @IBOutlet weak var vwCancelService: UIView!
+    
     var objJob: JobsModel?
 
     override func viewDidLoad() {
@@ -56,9 +58,22 @@ class JobDetailViewController: UIViewController {
             }
             
             let result1 = job.bidTime.splitTime()
+            self.lblTime.text = result1.time
+            self.lblAmPM.text = result1.period
             
             
-            //self.lblUserDistancew.text = job.userAddress
+            if job.status == "Completed" || job.status == "Awarded" {
+                if job.bidStatus == "Pending"{
+                    self.vwPayOnService.isHidden = false
+                    self.vwCancelService.isHidden = true
+                }else{
+                    vwButtons.isHidden = true
+                }
+            }else{
+                self.vwPayOnService.isHidden = false
+                self.vwCancelService.isHidden = false
+            }
+
         }
     }
 

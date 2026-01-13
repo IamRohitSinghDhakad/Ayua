@@ -97,15 +97,8 @@ extension MyReviewsViewController {
                 if let responseDict = response as? [String: Any] {
                     print(responseDict)
                     
-                    // Initialize main review model
                     self.obj = EmployeeReviewModel(from: responseDict)
                     
-//                    self.lblUserName.text = self.obj.employeeName
-//                    self.veRatings.rating = Double(self.obj.avgRating ?? "0") ?? 0.0
-//                    self.lblratingCount.text = "(\(self.obj.totalReviews ?? "0"))"
-//                    self.imgVwUser.sd_setImage(with: URL(string: self.obj.employeeImage ?? ""), placeholderImage: UIImage(named: "logo"))
-                    
-                    // Clear and reload data
                     self.arrReviews.removeAll()
                     
                     if let resultArray = responseDict["result"] as? [[String: Any]] {
