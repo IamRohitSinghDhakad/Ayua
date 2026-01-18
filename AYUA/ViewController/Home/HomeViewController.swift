@@ -7,9 +7,11 @@
 
 import UIKit
 import SDWebImage
+import CoreLocation
 
-class HomeViewController: UIViewController {
 
+class HomeViewController: UIViewController,CLLocationManagerDelegate {
+    
     @IBOutlet weak var cv: UICollectionView!
     @IBOutlet weak var pageController: UIPageControl!
     @IBOutlet weak var cvCategory: UICollectionView!
@@ -24,45 +26,118 @@ class HomeViewController: UIViewController {
     @IBOutlet weak var tblvw: UITableView!
     @IBOutlet weak var tfSearch: UITextField!
     
+    @IBOutlet weak var lblAddress: UILabel!
     private var arrImages: [BannerModel] = []
     var arrCategory = [CategoryModel]()
-    
+    var pickedImages: [UIImage] = []
+
     var arrSubCategory = [SubCategoryModel]()
     var filteredSubCategory = [SubCategoryModel]()
     var selectedIds = ""
     var selectedNames = ""
+    var selectedCategoryID = ""
+    var selectedSubCategoryID = ""
+    private var locationManager: CLLocationManager?
+    var currentLat: String = ""
+    var currentLong: String = ""
+    var dropLat: String = ""
+    var dropLong: String = ""
+    var currentAddress: String = ""
+    var dropAddress: String = ""
     
-       private var currentIndex: Int = 0
-       private var timer: Timer?
+    private var currentIndex: Int = 0
+    private var timer: Timer?
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setupLocationManager()
+        hideKeyboardWhenTappedAround()
+        self.tblvw.delegate = self
+        self.tblvw.dataSource = self
+        setupCollectionView()
+        startAutoScroll()
+        call_Websercice_GetProfile()
+        call_Websercice_GetBanners()
+        call_WebService_GetCategory()
+        
+        tfSearch.addTarget(self, action: #selector(searchTextChanged(_:)), for: .editingChanged)
+    }
+    
+    private func setupLocationManager() {
+        locationManager = CLLocationManager()
+        locationManager?.delegate = self
+        locationManager?.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager?.requestWhenInUseAuthorization()
+        
+        // Start updating location if authorized
+        if CLLocationManager.locationServicesEnabled() {
+            locationManager?.startUpdatingLocation()
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.last else { return }
+        
+        // Stop updating to save battery
+        manager.stopUpdatingLocation()
+        
+        currentLat = "\(location.coordinate.latitude)"
+        currentLong = "\(location.coordinate.longitude)"
+        
+        // Reverse geocode to get address
+        let geocoder = CLGeocoder()
+        geocoder.reverseGeocodeLocation(location) { [weak self] placemarks, error in
+            guard let self = self else { return }
+            
+            if let placemark = placemarks?.first {
+                var addressParts: [String] = []
+                
+                if let subThoroughfare = placemark.subThoroughfare {
+                    addressParts.append(subThoroughfare)
+                }
+                if let thoroughfare = placemark.thoroughfare {
+                    addressParts.append(thoroughfare)
+                }
+                if let locality = placemark.locality {
+                    addressParts.append(locality)
+                }
+                if let administrativeArea = placemark.administrativeArea {
+                    addressParts.append(administrativeArea)
+                }
+                if let postalCode = placemark.postalCode {
+                    addressParts.append(postalCode)
+                }
+                
+                let fullAddress = addressParts.joined(separator: ", ")
+                self.currentAddress = fullAddress
+                self.lblAddress.text = fullAddress
+            }
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("Failed to get user location:", error.localizedDescription)
+        self.lblAddress.text = "Location not available"
+    }
 
-       override func viewDidLoad() {
-           super.viewDidLoad()
-           self.tblvw.delegate = self
-           self.tblvw.dataSource = self
-           setupCollectionView()
-           startAutoScroll()
-           call_Websercice_GetProfile()
-           call_Websercice_GetBanners()
-           call_WebService_GetCategory()
-           
-           tfSearch.addTarget(self, action: #selector(searchTextChanged(_:)), for: .editingChanged)
-       }
 
-       deinit {
-           timer?.invalidate()
-       }
+
+    
+    deinit {
+        timer?.invalidate()
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.subVw.isHidden = true
     }
-
+    
     @IBAction func btnOpenSideMenu(_ sender: Any) {
         SideMenuManager.shared.showMenu(from: self)
     }
     
     @IBAction func btnOnFindProfessional(_ sender: Any) {
-        
+        callWebserviceFindProfessional()
     }
     @IBAction func btnOpenSelectServiceType(_ sender: Any) {
         self.subVw.isHidden = false
@@ -70,21 +145,44 @@ class HomeViewController: UIViewController {
     
     @IBAction func openImageView(_ sender: UIButton) {
         MediaPicker.shared.pickMedia(from: self) { image, dict in
-            switch sender.tag {
-            case 1:
-                self.imgVwOne.image = image
-            case 2:
-                self.imgVwTwo.image = image
-            case 3:
-                self.imgVwThree.image = image
-            default:
-                self.imgVwFour.image = image
-            }
-        }
+               guard let image = image else { return }
+
+               switch sender.tag {
+               case 1:
+                   self.imgVwOne.image = image
+               case 2:
+                   self.imgVwTwo.image = image
+               case 3:
+                   self.imgVwThree.image = image
+               case 4:
+                   self.imgVwFour.image = image
+               default:
+                   break
+               }
+
+               // Add to pickedImages if not already there
+               if !self.pickedImages.contains(image) {
+                   self.pickedImages.append(image)
+               }
+           }
     }
     
     @IBAction func openLoactionView(_ sender: Any) {
+        let vc = storyboard?.instantiateViewController(
+            withIdentifier: "MapViewController"
+        ) as! MapViewController
         
+        vc.onLocationSelected = { [weak self] data in
+            self?.currentLat = "\(data.currentLat)"
+            self?.currentLong = "\(data.currentLong)"
+            self?.currentAddress = data.currentAddress
+            self?.dropAddress = data.selectedAddress
+            self?.dropLat = "\(data.selectedLat)"
+            self?.dropLong = "\(data.selectedLong)"
+            
+        }
+        
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     @IBAction func btnOnCloseSubVw(_ sender: Any) {
@@ -107,6 +205,7 @@ class HomeViewController: UIViewController {
         // Set names to textfield
         lblSelectedServices.text = selectedNames
         
+        self.selectedSubCategoryID = "\(selectedIds)"
         print("✅ Selected IDs: \(selectedIds)")
         print("✅ Selected Names: \(selectedNames)")
         
@@ -166,14 +265,14 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource{
 
 // MARK: - Setup
 extension HomeViewController {
-
+    
     private func setupCollectionView() {
         cv.delegate = self
         cv.dataSource = self
-
+        
         cvCategory.delegate = self
         cvCategory.dataSource = self
-
+        
         
         if let layout = cv.collectionViewLayout as? UICollectionViewFlowLayout {
             layout.scrollDirection = .horizontal
@@ -184,15 +283,15 @@ extension HomeViewController {
             layout.scrollDirection = .horizontal
             layout.minimumLineSpacing = 0
         }
-
+        
         cv.isPagingEnabled = true
         cv.showsHorizontalScrollIndicator = false
     }
-
+    
     private func setupPageControl() {
         pageController.numberOfPages = arrImages.count
         pageController.currentPage = 0
-
+        
         pageController.currentPageIndicatorTintColor = UIColor(named: "primary")   // active dot
         pageController.pageIndicatorTintColor = .lightGray           // inactive dots
     }
@@ -200,7 +299,7 @@ extension HomeViewController {
 
 // MARK: - Auto Scroll
 extension HomeViewController {
-
+    
     private func startAutoScroll() {
         timer = Timer.scheduledTimer(
             timeInterval: 4.5,
@@ -210,15 +309,15 @@ extension HomeViewController {
             repeats: true
         )
     }
-
+    
     @objc private func autoScroll() {
         guard arrImages.count > 1 else { return }
-
+        
         currentIndex += 1
         if currentIndex >= arrImages.count {
             currentIndex = 0
         }
-
+        
         let indexPath = IndexPath(item: currentIndex, section: 0)
         cv.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
         pageController.currentPage = currentIndex
@@ -227,7 +326,7 @@ extension HomeViewController {
 
 // MARK: - UICollectionViewDataSource
 extension HomeViewController: UICollectionViewDataSource {
-
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == cvCategory {
             return arrCategory.count
@@ -235,31 +334,31 @@ extension HomeViewController: UICollectionViewDataSource {
             return arrImages.count
         }
     }
-
+    
     func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-
+        
         if collectionView == cvCategory {
             let cell = cvCategory.dequeueReusableCell(
                 withReuseIdentifier: "CategoryCollectionViewCell",
                 for: indexPath
             ) as! CategoryCollectionViewCell
-
+            
             let obj = arrCategory[indexPath.item]
             cell.lblTitle.text = obj.name ?? ""
-
+            
             let isSelected = indexPath.item == selectedCategoryIndex
             cell.configure(isSelected: isSelected, imageUrl: obj.image)
-
+            
             return cell
         }else{
             let cell = cv.dequeueReusableCell(
                 withReuseIdentifier: "HomeCollectionViewCell",
                 for: indexPath
             ) as! HomeCollectionViewCell
-
+            
             let obj = self.arrImages[indexPath.item]
             
             cell.imgvwCell.sd_setImage(with: URL(string: obj.image ?? ""), placeholderImage: UIImage(named: "logo"))
@@ -270,32 +369,33 @@ extension HomeViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard collectionView == cvCategory else { return }
-
+        
+        self.selectedCategoryID = arrCategory[indexPath.item].id ?? ""
         selectedCategoryIndex = indexPath.item
         self.call_WebService_GetSubCategory(strSelectedCategoryID: self.arrCategory[self.selectedCategoryIndex].id ?? "")
         cvCategory.reloadData()
     }
-
+    
 }
 
 // MARK: - UICollectionViewDelegateFlowLayout
 
 extension HomeViewController: UICollectionViewDelegateFlowLayout {
-
+    
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-
+        
         if collectionView == cvCategory {
             let itemsPerRow: CGFloat = 4
             let spacing: CGFloat = 10
-
+            
             let totalSpacing = (itemsPerRow - 1) * spacing
             let availableWidth = collectionView.frame.width - totalSpacing
             let itemWidth = availableWidth / itemsPerRow
-
+            
             return CGSize(width: itemWidth, height: itemWidth + 20) // adjust height if label exists
         } else {
             // Banner collection view (existing behavior)
@@ -303,7 +403,7 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
                           height: collectionView.frame.height)
         }
     }
-
+    
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
@@ -311,7 +411,7 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
     ) -> CGFloat {
         return collectionView == cvCategory ? 10 : 0
     }
-
+    
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
@@ -319,7 +419,7 @@ extension HomeViewController: UICollectionViewDelegateFlowLayout {
     ) -> CGFloat {
         return collectionView == cvCategory ? 10 : 0
     }
-
+    
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         guard scrollView == cv else { return }
         let page = Int(scrollView.contentOffset.x / scrollView.frame.width)
@@ -343,7 +443,7 @@ extension HomeViewController {
         objWebServiceManager.showIndicator()
         
         let dictParam = ["login_user_id":objAppShareData.UserDetail.strUserId!,
-            "lang":objAppShareData.currentLanguage]as [String:Any]
+                         "lang":objAppShareData.currentLanguage]as [String:Any]
         
         
         objWebServiceManager.requestPost(strURL: WsUrl.url_getUserProfile, queryParams: [:], params: dictParam, strCustomValidation: "", showIndicator: false) { (response) in
@@ -351,15 +451,15 @@ extension HomeViewController {
             
             let status = (response["status"] as? Int)
             let message = (response["message"] as? String)
-           
+            
             
             if status == MessageConstant.k_StatusCode{
                 if let resultArray = response["result"] as? [String: Any] {
-                   
+                    
                     
                 }
             }else{
-               
+                
                 objAlert.showAlert(message: message ?? "", title: "Alert", controller: self)
             }
         } failure: { (error) in
@@ -417,83 +517,228 @@ extension HomeViewController {
     
     
     func call_WebService_GetCategory() {
-           guard objWebServiceManager.isNetworkAvailable() else {
-               objAlert.showAlert(message: "No Internet Connection", title: "Alert", controller: self)
-               return
-           }
-           
-           objWebServiceManager.showIndicator()
-           
-           let dictParam: [String: Any] = [
-               "user_id": objAppShareData.UserDetail.strUserId ?? "",
-               "lang": objAppShareData.currentLanguage
-           ]
-           
-           objWebServiceManager.requestPost(strURL: WsUrl.url_getCategory, queryParams: [:], params: dictParam, strCustomValidation: "", showIndicator: false) { (response) in
-               objWebServiceManager.hideIndicator()
-               
-               print(response)
-               
-               let status = response["status"] as? Int
-               if status == MessageConstant.k_StatusCode,
-                  let resultArray = response["result"] as? [[String: Any]] {
-                   
-                   self.arrCategory.removeAll()
-                   
-                   self.arrCategory = resultArray.map { CategoryModel(from: $0) }
-                  
-                   self.selectedCategoryIndex = 0
-                   self.cvCategory.reloadData()
-                   
-                   self.call_WebService_GetSubCategory(strSelectedCategoryID: self.arrCategory[self.selectedCategoryIndex].id ?? "")
-
-               } else {
-                   let message = response["message"] as? String ?? "Something went wrong"
-                   objAlert.showAlert(message: message, title: "Alert", controller: self)
-               }
-           } failure: { error in
-               objWebServiceManager.hideIndicator()
-               print("❌ Error:", error)
-           }
-       }
+        guard objWebServiceManager.isNetworkAvailable() else {
+            objAlert.showAlert(message: "No Internet Connection", title: "Alert", controller: self)
+            return
+        }
+        
+        objWebServiceManager.showIndicator()
+        
+        let dictParam: [String: Any] = [
+            "user_id": objAppShareData.UserDetail.strUserId ?? "",
+            "lang": objAppShareData.currentLanguage
+        ]
+        
+        objWebServiceManager.requestPost(strURL: WsUrl.url_getCategory, queryParams: [:], params: dictParam, strCustomValidation: "", showIndicator: false) { (response) in
+            objWebServiceManager.hideIndicator()
+            
+            print(response)
+            
+            let status = response["status"] as? Int
+            if status == MessageConstant.k_StatusCode,
+               let resultArray = response["result"] as? [[String: Any]] {
+                
+                self.arrCategory.removeAll()
+                
+                self.arrCategory = resultArray.map { CategoryModel(from: $0) }
+                if self.arrCategory.count > 0 {
+                    self.selectedCategoryID = self.arrCategory[0].id ?? ""
+                }
+                self.selectedCategoryIndex = 0
+                self.cvCategory.reloadData()
+                
+                self.call_WebService_GetSubCategory(strSelectedCategoryID: self.arrCategory[self.selectedCategoryIndex].id ?? "")
+                
+            } else {
+                let message = response["message"] as? String ?? "Something went wrong"
+                objAlert.showAlert(message: message, title: "Alert", controller: self)
+            }
+        } failure: { error in
+            objWebServiceManager.hideIndicator()
+            print("❌ Error:", error)
+        }
+    }
     
     
     func call_WebService_GetSubCategory(strSelectedCategoryID: String) {
-           guard objWebServiceManager.isNetworkAvailable() else {
-               objAlert.showAlert(message: "No Internet Connection", title: "Alert", controller: self)
-               return
-           }
-           
-          // objWebServiceManager.showIndicator()
-           
-           let dictParam: [String: Any] = [
-               "category_id": strSelectedCategoryID,
-               "lang": objAppShareData.currentLanguage
-           ]
+        guard objWebServiceManager.isNetworkAvailable() else {
+            objAlert.showAlert(message: "No Internet Connection", title: "Alert", controller: self)
+            return
+        }
+        
+        // objWebServiceManager.showIndicator()
+        
+        let dictParam: [String: Any] = [
+            "category_id": strSelectedCategoryID,
+            "lang": objAppShareData.currentLanguage
+        ]
         print(dictParam)
-           
-           objWebServiceManager.requestPost(strURL: WsUrl.url_getSubCategory, queryParams: [:], params: dictParam, strCustomValidation: "", showIndicator: false) { (response) in
-               objWebServiceManager.hideIndicator()
-               print(response)
-               let status = response["status"] as? Int
-               if status == MessageConstant.k_StatusCode,
-                  let resultArray = response["result"] as? [[String: Any]] {
-                   
-                   self.arrSubCategory.removeAll()
-                   self.filteredSubCategory.removeAll()
-                   
-                   self.arrSubCategory = resultArray.map { SubCategoryModel(from: $0) }
-                   self.filteredSubCategory = self.arrSubCategory
-                   self.tblvw.reloadData()
-               } else {
-                   let message = response["message"] as? String ?? "Something went wrong"
-                   objAlert.showAlert(message: message, title: "Alert", controller: self)
-               }
-           } failure: { error in
-               objWebServiceManager.hideIndicator()
-               print("❌ Error:", error)
-           }
-       }
+        
+        objWebServiceManager.requestPost(strURL: WsUrl.url_getSubCategory, queryParams: [:], params: dictParam, strCustomValidation: "", showIndicator: false) { (response) in
+            objWebServiceManager.hideIndicator()
+            print(response)
+            let status = response["status"] as? Int
+            if status == MessageConstant.k_StatusCode,
+               let resultArray = response["result"] as? [[String: Any]] {
+                
+                self.arrSubCategory.removeAll()
+                self.filteredSubCategory.removeAll()
+                
+                self.arrSubCategory = resultArray.map { SubCategoryModel(from: $0) }
+                self.filteredSubCategory = self.arrSubCategory
+                self.tblvw.reloadData()
+            } else {
+                let message = response["message"] as? String ?? "Something went wrong"
+                objAlert.showAlert(message: message, title: "Alert", controller: self)
+            }
+        } failure: { error in
+            objWebServiceManager.hideIndicator()
+            print("❌ Error:", error)
+        }
+    }
+}
+
+extension HomeViewController{
+    
+    
+    func callWebserviceFindProfessional() {
+        
+        guard objWebServiceManager.isNetworkAvailable() else {
+            objWebServiceManager.hideIndicator()
+            objAlert.showAlert(message: "No Internet Connection", title: "Alert", controller: self)
+            return
+        }
+        
+        // Validate location & category
+        if currentAddress.isEmpty || currentLat.isEmpty || currentLong.isEmpty {
+            objAlert.showAlert(message: "Please select your current location", title: "Alert", controller: self)
+            return
+        }
+        
+        if dropAddress.isEmpty || dropLat.isEmpty || dropLong.isEmpty {
+            objAlert.showAlert(message: "Please select drop location", title: "Alert", controller: self)
+            return
+        }
+        
+        if selectedCategoryID.isEmpty {
+            objAlert.showAlert(message: "Please select a category", title: "Alert", controller: self)
+            return
+        }
+        
+        if selectedSubCategoryID.isEmpty {
+            objAlert.showAlert(message: "Please select subcategory", title: "Alert", controller: self)
+            return
+        }
+        
+        // Ensure at least 1 image
+        guard !pickedImages.isEmpty else {
+            objAlert.showAlert(message: "Please select at least one image", title: "Alert", controller: self)
+            return
+        }
+        
+        objWebServiceManager.showIndicator()
+        self.view.endEditing(true)
+        
+        // Prepare image data
+        var imagesData: [Data] = []
+        var imageParamNames: [String] = []
+        
+        for (index, image) in pickedImages.enumerated() {
+            if let data = image.jpegData(compressionQuality: 0.5) {
+                imagesData.append(data)
+                imageParamNames.append("image\(index + 1)")
+            }
+        }
+        
+        // Prepare API parameters
+        let dicrParam: [String: Any] = [
+            "user_id": objAppShareData.UserDetail.strUserId ?? "",
+            "category_id": self.selectedCategoryID,
+            "sub_category_id": self.selectedSubCategoryID,
+            "detail": self.txtVw.text ?? "",
+            "address": self.currentAddress,
+            "lat": self.currentLat,
+            "lng": self.currentLong,
+            "drop_addres": self.dropAddress,
+            "drop_lat": self.dropLat,
+            "drop_lng": self.dropLong,
+            "lang": objAppShareData.currentLanguage
+        ]
+        
+        print("Parameters:", dicrParam)
+        print("Images to upload:", imageParamNames)
+        
+        // Upload images
+        objWebServiceManager.uploadMultipartWithImagesData(
+            strURL: WsUrl.url_create_job,
+            params: dicrParam,
+            showIndicator: true,
+            customValidation: "",
+            imageData: nil,
+            imageToUpload: imagesData,
+            imagesParam: imageParamNames,
+            fileName: "image",
+            mimeType: "image/jpeg"
+        ) { response in
+            objWebServiceManager.hideIndicator()
+            print(response)
+            
+            let status = response["status"] as? Int
+            let message = response["message"] as? String
+            
+            if status == MessageConstant.k_StatusCode {
+                objAlert.showAlertSingleButtonCallBack(alertBtn: "OK", title: "", message: "Success", controller: self) {
+                    // Optional: Reset picked images
+                    self.resetHomeViewController()
+                }
+            } else {
+                objAlert.showAlert(message: response["result"] as? String ?? "Something went wrong", title: "Alert", controller: self)
+            }
+            
+        } failure: { error in
+            objWebServiceManager.hideIndicator()
+            print("Error uploading:", error)
+        }
+    }
+    
+    private func resetHomeViewController() {
+        // Reset category selection
+        selectedCategoryIndex = 0
+        selectedCategoryID = arrCategory.first?.id ?? ""
+        cvCategory.reloadData()
+        
+        // Reset subcategory selection
+        for i in 0..<arrSubCategory.count {
+            arrSubCategory[i].isSelected = 0
+        }
+        filteredSubCategory = arrSubCategory
+        tblvw.reloadData()
+        selectedSubCategoryID = ""
+        lblSelectedServices.text = "Please Select Service type"
+        
+        // Reset picked images
+        pickedImages.removeAll()
+        imgVwOne.image = UIImage(named: "upload")
+        imgVwTwo.image = UIImage(named: "upload")
+        imgVwThree.image = UIImage(named: "upload")
+        imgVwFour.image = UIImage(named: "upload")
+        
+        // Reset text view
+        txtVw.text = ""
+        
+        // Reset location
+        currentLat = ""
+        currentLong = ""
+        currentAddress = ""
+        dropLat = ""
+        dropLong = ""
+        dropAddress = ""
+        
+        self.view.endEditing(true)
+    }
+
+
+    
     
 }
-    
+

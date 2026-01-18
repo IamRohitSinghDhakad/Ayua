@@ -3,10 +3,12 @@
 <plist version="1.0">
 <dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Need Camera access for upload Image</string>
+	<string>Need Camera access for upload your profile picture</string>
 	<key>NSAppleMusicUsageDescription</key>
-	<string>Need Library access for upload Image</string>
+	<string>Need Camera access for upload your profile picture</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Need Library access for upload Image</string>
+	<string>Need Camera library access for upload your profile picture</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app needs your location to show relevant jobs nearby your location.</string>
 </dict>
 </plist>
