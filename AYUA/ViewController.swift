@@ -45,15 +45,17 @@ class ViewController: UIViewController {
         if AppSharedData.sharedObject().isLoggedIn {
             
             if objAppShareData.UserDetail.type == "User" {
+                UserSession.shared.userType = .User
                 let vc = (self.mainStoryboard.instantiateViewController(withIdentifier: "HomeViewController") as? HomeViewController)!
                 let navController = UINavigationController(rootViewController: vc)
                 navController.isNavigationBarHidden = true
                 appDelegate.window?.rootViewController = navController
             }else {
-//                let vc = (self.mainStoryboard.instantiateViewController(withIdentifier: "TabBarEmployerViewController") as? TabBarEmployerViewController)!
-//                let navController = UINavigationController(rootViewController: vc)
-//                navController.isNavigationBarHidden = true
-//                appDelegate.window?.rootViewController = navController
+                UserSession.shared.userType = .Provider
+                let vc = (self.mainStoryboard.instantiateViewController(withIdentifier: "UserHomeViewController") as? UserHomeViewController)!
+                let navController = UINavigationController(rootViewController: vc)
+                navController.isNavigationBarHidden = true
+                appDelegate.window?.rootViewController = navController
             }
            
           

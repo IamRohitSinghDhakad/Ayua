@@ -106,7 +106,7 @@ extension LoginViewController {
                     
                     objAppShareData.SaveUpdateUserInfoFromAppshareData(userDetail: resultArray)
                     objAppShareData.fetchUserInfoFromAppshareData()
-                    
+                    UserSession.shared.isLoggedIn = true
                     if objAppShareData.UserDetail.type == "User"{
                         self.setRootController()
                     }else{
@@ -138,10 +138,10 @@ extension LoginViewController {
     func setRootControllerEmployer() {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let mainStoryboard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-//        let homeViewController = mainStoryboard.instantiateViewController(withIdentifier: "TabBarEmployerViewController") as! TabBarEmployerViewController
-//        let navController = UINavigationController(rootViewController: homeViewController)
-//        navController.navigationBar.isHidden = true
-//        appDelegate.window?.rootViewController = navController
+        let homeViewController = mainStoryboard.instantiateViewController(withIdentifier: "UserHomeViewController") as! UserHomeViewController
+        let navController = UINavigationController(rootViewController: homeViewController)
+        navController.navigationBar.isHidden = true
+        appDelegate.window?.rootViewController = navController
     }
 }
 

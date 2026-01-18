@@ -20,16 +20,38 @@ class WelcomeScreenViewController: UIViewController {
     }
     
     @IBAction func btnOnSerchForHelp(_ sender: Any) {
-        let vc = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+        
+        UserSession.shared.userType = .User
+        
+        let sb = UIStoryboard(name: "Main", bundle: nil)
+        let vc = sb.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
         vc.strType = UserInfoType.User.rawValue
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
     @IBAction func btnOnToOfferMyService(_ sender: Any) {
-        let vc = self.storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
+        UserSession.shared.userType = .Provider
+        
+        let sb = UIStoryboard(name: "Main", bundle: nil)
+        let vc = sb.instantiateViewController(withIdentifier: "LoginViewController") as! LoginViewController
         vc.strType = UserInfoType.Provider.rawValue
         self.navigationController?.pushViewController(vc, animated: true)
     }
-
-   
 }
+
+
+
+final class UserSession {
+
+    static let shared = UserSession()
+    private init() {}
+
+    var userType: UserInfoType?
+    var isLoggedIn: Bool = false
+
+    func clear() {
+        userType = nil
+        isLoggedIn = false
+    }
+}
+

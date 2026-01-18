@@ -84,7 +84,7 @@ class SideMenuViewController: UIViewController, UITableViewDelegate, UITableView
 
         let selectedItem = menuItems[indexPath.row]
 
-        if selectedItem.title == "Logout" {
+        if selectedItem.title == "LOGOUT" {
             showLogoutConfirmation()
         } else {
             onMenuItemSelected?(selectedItem)
@@ -118,20 +118,29 @@ class SideMenuViewController: UIViewController, UITableViewDelegate, UITableView
         // Simulate API response
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             // On success: clear session & navigate to login
-            self.navigateToLogin()
+            objAppShareData.signOut()
+            //self.navigateToLogin()
         }
     }
     
     private func navigateToLogin() {
-        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let window = scene.windows.first else {
-            return
-        }
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        let vc = (self.mainStoryboard.instantiateViewController(withIdentifier: "WelcomeScreenViewController") as? WelcomeScreenViewController)!
+        let navController = UINavigationController(rootViewController: vc)
+        navController.isNavigationBarHidden = true
+        appDelegate.window?.rootViewController = navController
         
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let loginVC = storyboard.instantiateViewController(withIdentifier: "LoginViewController")
-        
-        window.rootViewController = loginVC
-        window.makeKeyAndVisible()
+//        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+//              let window = scene.windows.first else {
+//            return
+//        }
+//        
+//        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+//        let loginVC = storyboard.instantiateViewController(withIdentifier: "WelcomeScreenViewController")
+//        
+//        window.rootViewController = loginVC
+//        window.makeKeyAndVisible()
     }
+    
+    
 }

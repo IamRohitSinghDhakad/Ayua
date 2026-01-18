@@ -26,24 +26,74 @@ class SideMenuManager {
     private var viewControllerCache: [String: UIViewController] = [:]
 
     // MARK: - Default Menu Setup
+    
     private func setupDefaultMenu() {
-        menuItems = [
-            MenuItem(title: "HOME".localized(), storyboardID: "HomeViewController", iconInactive: "HOME", iconActive: "HOME"),
-            MenuItem(title: "CHAT".localized(), storyboardID: "ChatViewController", iconInactive: "CHAT", iconActive: "CHAT"),
-            MenuItem(title: "HISTORY".localized(), storyboardID: "HistoryViewController", iconInactive: "HISTORY", iconActive: "HISTORY"),
-            MenuItem(title: "MY ACCOUNT".localized(), storyboardID: "MyAccountViewController", iconInactive: "MY ACCOUNT", iconActive: "MY ACCOUNT"),
+
+        guard let userType = UserSession.shared.userType else {
+            menuItems = []
+            return
+        }
+
+        switch userType {
+
+        case .User:
+            menuItems = userMenuItems()
+
+        case .Provider:
+            menuItems = providerMenuItems()
+        }
+    }
+    
+    private func userMenuItems() -> [MenuItem] {
+        return [
+            MenuItem(title: "HOME", storyboardID: "HomeViewController", iconInactive: "HOME", iconActive: "HOME"),
+            MenuItem(title: "CHAT", storyboardID: "ChatViewController", iconInactive: "CHAT", iconActive: "CHAT"),
+            MenuItem(title: "HISTORY", storyboardID: "HistoryViewController", iconInactive: "HISTORY", iconActive: "HISTORY"),
+            MenuItem(title: "MY ACCOUNT", storyboardID: "MyAccountViewController", iconInactive: "MY ACCOUNT", iconActive: "MY ACCOUNT"),
             MenuItem(title: "My REVIEWS".localized(), storyboardID: "MyReviewsViewController", iconInactive: "REVIEW", iconActive: "REVIEW"),
             MenuItem(title: "LANGUAGE".localized(), storyboardID: "LanguageViewController", iconInactive: "language", iconActive: "language"),
-            MenuItem(title: "PRIVACY POLICY", storyboardID: "PrivacyPolicyViewController", iconInactive: "PRIVACY", iconActive: "Privacy Policy"),
+            MenuItem(title: "PRIVACY POLICY", storyboardID: "PrivacyPolicyViewController", iconInactive: "PRIVACY", iconActive: "PRIVACY"),
             MenuItem(title: "TERMS & CONDITIONS", storyboardID: "PrivacyPolicyViewController", iconInactive: "terms", iconActive: "terms"),
-            MenuItem(title: "CONTACT US", storyboardID: "ContactUsViewController", iconInactive: "contact", iconActive: "contact"),
             MenuItem(title: "LOGOUT", storyboardID: nil, iconInactive: "logout", iconActive: "logout")
         ]
     }
 
+    private func providerMenuItems() -> [MenuItem] {
+        return [
+            MenuItem(title: "HOME", storyboardID: "UserHomeViewController", iconInactive: "HOME", iconActive: "HOME"),
+            MenuItem(title: "CHAT", storyboardID: "ChatViewController", iconInactive: "CHAT", iconActive: "CHAT"),
+            MenuItem(title: "HISTORY", storyboardID: "HistoryViewController", iconInactive: "HISTORY", iconActive: "HISTORY"),
+            MenuItem(title: "MY ACCOUNT", storyboardID: "MyAccountViewController", iconInactive: "MY ACCOUNT", iconActive: "MY ACCOUNT"),
+            MenuItem(title: "MEMBERSHIP", storyboardID: "MyAccountViewController", iconInactive: "MY ACCOUNT", iconActive: "MY ACCOUNT"),
+            MenuItem(title: "My REVIEWS".localized(), storyboardID: "MyReviewsViewController", iconInactive: "REVIEW", iconActive: "REVIEW"),
+            MenuItem(title: "LANGUAGE".localized(), storyboardID: "LanguageViewController", iconInactive: "language", iconActive: "language"),
+            MenuItem(title: "PRIVACY POLICY", storyboardID: "PrivacyPolicyViewController", iconInactive: "PRIVACY", iconActive: "PRIVACY"),
+            MenuItem(title: "TERMS & CONDITIONS", storyboardID: "PrivacyPolicyViewController", iconInactive: "terms", iconActive: "terms"),
+            MenuItem(title: "LOGOUT", storyboardID: nil, iconInactive: "logout", iconActive: "logout")
+        ]
+    }
+
+
+    
+//    private func setupDefaultMenu() {
+//        
+//        menuItems = [
+//            MenuItem(title: "HOME".localized(), storyboardID: "HomeViewController", iconInactive: "HOME", iconActive: "HOME"),
+//            MenuItem(title: "CHAT".localized(), storyboardID: "ChatViewController", iconInactive: "CHAT", iconActive: "CHAT"),
+//            MenuItem(title: "HISTORY".localized(), storyboardID: "HistoryViewController", iconInactive: "HISTORY", iconActive: "HISTORY"),
+//            MenuItem(title: "MY ACCOUNT".localized(), storyboardID: "MyAccountViewController", iconInactive: "MY ACCOUNT", iconActive: "MY ACCOUNT"),
+//            MenuItem(title: "My REVIEWS".localized(), storyboardID: "MyReviewsViewController", iconInactive: "REVIEW", iconActive: "REVIEW"),
+//            MenuItem(title: "LANGUAGE".localized(), storyboardID: "LanguageViewController", iconInactive: "language", iconActive: "language"),
+//            MenuItem(title: "PRIVACY POLICY", storyboardID: "PrivacyPolicyViewController", iconInactive: "PRIVACY", iconActive: "Privacy Policy"),
+//            MenuItem(title: "TERMS & CONDITIONS", storyboardID: "PrivacyPolicyViewController", iconInactive: "terms", iconActive: "terms"),
+//            MenuItem(title: "CONTACT US", storyboardID: "ContactUsViewController", iconInactive: "contact", iconActive: "contact"),
+//            MenuItem(title: "LOGOUT", storyboardID: nil, iconInactive: "logout", iconActive: "logout")
+//        ]
+//    }
+
     // MARK: - Show Side Menu
     func showMenu(from parent: UIViewController, widthFactor: CGFloat = 0.7) {
-
+        setupDefaultMenu()
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         guard let sideMenuVC = storyboard.instantiateViewController(withIdentifier: "SideMenuViewController") as? SideMenuViewController else {
             print("⚠️ Could not find SideMenuViewController")
@@ -102,7 +152,7 @@ class SideMenuManager {
     // MARK: - Handle Menu Selection
     private func handleMenuSelection(_ item: MenuItem, from parent: UIViewController) {
 
-        if item.title == "Logout" {
+        if item.title == "LOGOUT" {
             showLogoutConfirmation(from: parent)
             return
         }
@@ -112,8 +162,16 @@ class SideMenuManager {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: storyboardID)
 
+        // 🔥 Handle Privacy & Terms
+        if let legalVC = vc as? PrivacyPolicyViewController {
+            if item.title == "PRIVACY POLICY" {
+                legalVC.pageType = .privacy
+            } else if item.title == "TERMS & CONDITIONS" {
+                legalVC.pageType = .terms
+            }
+        }
+
         if let nav = parent.navigationController {
-            // ✅ Prevent pushing same controller again
             if let topVC = nav.topViewController,
                type(of: topVC) == type(of: vc) {
                 print("⚠️ Already on \(storyboardID), skipping push")
@@ -124,6 +182,31 @@ class SideMenuManager {
             parent.present(vc, animated: true)
         }
     }
+
+//    private func handleMenuSelection(_ item: MenuItem, from parent: UIViewController) {
+//
+//        if item.title == "Logout" {
+//            showLogoutConfirmation(from: parent)
+//            return
+//        }
+//
+//        guard let storyboardID = item.storyboardID else { return }
+//
+//        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+//        let vc = storyboard.instantiateViewController(withIdentifier: storyboardID)
+//
+//        if let nav = parent.navigationController {
+//            // ✅ Prevent pushing same controller again
+//            if let topVC = nav.topViewController,
+//               type(of: topVC) == type(of: vc) {
+//                print("⚠️ Already on \(storyboardID), skipping push")
+//                return
+//            }
+//            nav.pushViewController(vc, animated: true)
+//        } else {
+//            parent.present(vc, animated: true)
+//        }
+//    }
 
 
     // MARK: - Logout Confirmation
