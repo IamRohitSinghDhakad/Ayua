@@ -10,7 +10,6 @@ import SDWebImage
 
 class UsersReviewViewController: UIViewController {
     
-    
     @IBOutlet weak var imgVwUser: UIImageView!
     @IBOutlet weak var tblVw: UITableView!
     @IBOutlet weak var lblUserName: UILabel!
@@ -29,7 +28,6 @@ class UsersReviewViewController: UIViewController {
         self.tblVw.dataSource = self
         
         call_WebService_MyReviews()
-        
     }
     
     @IBAction func btnOnBack(_ sender: Any) {

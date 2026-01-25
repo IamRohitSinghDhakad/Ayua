@@ -1,23 +1,31 @@
 //
-//  UserHomeTableViewCell.swift
+//  InProcessTableViewCell.swift
 //  AYUA
 //
-//  Created by Rohit Singh Dhakad  [C] on 18/01/26.
+//  Created by Rohit Singh Dhakad  [C] on 25/01/26.
 //
 
 import UIKit
 
-class UserHomeTableViewCell: UITableViewCell {
-    @IBOutlet weak var userVw: UIView!
-    @IBOutlet weak var bidVw: UIView!
-    @IBOutlet weak var sendOffervw: UIView!
+class InProcessTableViewCell: UITableViewCell {
+
     @IBOutlet weak var imgVwUser: UIImageView!
     @IBOutlet weak var lblUserName: UILabel!
     @IBOutlet weak var lblAddress: UILabel!
     @IBOutlet weak var lblAverageRating: UILabel!
-    @IBOutlet weak var lblDistance: UILabel!
+    @IBOutlet weak var lblService: UILabel!
     @IBOutlet weak var lblDetails: UILabel!
-    @IBOutlet weak var btnSendOffer: UIButton!
+    
+    @IBOutlet weak var lblDay: UILabel!
+    @IBOutlet weak var lblMonth: UILabel!
+    @IBOutlet weak var lblDate: UILabel!
+    @IBOutlet weak var lblYear: UILabel!
+    @IBOutlet weak var lblTime: UILabel!
+    @IBOutlet weak var lblAMPM: UILabel!
+    
+    @IBOutlet weak var btnManage: UIButton!
+    @IBOutlet weak var btnCancel: UIButton!
+    
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -29,7 +37,5 @@ class UserHomeTableViewCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
-    
-    
     
 }

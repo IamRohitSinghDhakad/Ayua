@@ -62,7 +62,7 @@ class SideMenuManager {
         return [
             MenuItem(title: "HOME", storyboardID: "UserHomeViewController", iconInactive: "HOME", iconActive: "HOME"),
             MenuItem(title: "CHAT", storyboardID: "ChatViewController", iconInactive: "CHAT", iconActive: "CHAT"),
-            MenuItem(title: "HISTORY", storyboardID: "HistoryViewController", iconInactive: "HISTORY", iconActive: "HISTORY"),
+            MenuItem(title: "HISTORY", storyboardID: "UsersHistoryViewController", iconInactive: "HISTORY", iconActive: "HISTORY"),
             MenuItem(title: "MY ACCOUNT", storyboardID: "MyAccountViewController", iconInactive: "MY ACCOUNT", iconActive: "MY ACCOUNT"),
             MenuItem(title: "MEMBERSHIP", storyboardID: "MyAccountViewController", iconInactive: "MY ACCOUNT", iconActive: "MY ACCOUNT"),
             MenuItem(title: "My REVIEWS".localized(), storyboardID: "MyReviewsViewController", iconInactive: "REVIEW", iconActive: "REVIEW"),

@@ -593,6 +593,38 @@ extension UIViewController {
 
 extension String {
     
+
+    /// Calculates distance in KM between two coordinates (all inputs as String)
+    static func distanceInKM(fromLat currentLat: String,fromLng currentLng: String,toLat otherLat: String,toLng otherLng: String) -> String {
+
+        print(currentLat, currentLng, otherLat, otherLng)
+        guard
+            let lat1 = Double(currentLat),
+            let lon1 = Double(currentLng),
+            let lat2 = Double(otherLat),
+            let lon2 = Double(otherLng)
+        else {
+            return "0 km"
+        }
+
+        let earthRadius = 6371.0 // KM
+
+        let dLat = (lat2 - lat1) * .pi / 180
+        let dLon = (lon2 - lon1) * .pi / 180
+
+        let a =
+            sin(dLat / 2) * sin(dLat / 2) +
+            cos(lat1 * .pi / 180) *
+            cos(lat2 * .pi / 180) *
+            sin(dLon / 2) * sin(dLon / 2)
+
+        let c = 2 * atan2(sqrt(a), sqrt(1 - a))
+        let distance = earthRadius * c
+
+        return String(format: "%.2f km", distance)
+    }
+
+    
     func dateComponents() -> (dayName: String,
                               day: String,
                               month: String,

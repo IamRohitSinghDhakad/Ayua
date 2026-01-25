@@ -55,7 +55,7 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Prs-5Y-5oF">
                                         <rect key="frame" x="0.0" y="41" width="610" height="58"/>
                                         <subviews>
-                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="fR7-ig-emv">
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="fR7-ig-emv">
                                                 <rect key="frame" x="8" y="6.6666666666666643" width="45" height="45"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" secondItem="fR7-ig-emv" secondAttribute="height" id="FW9-Qq-mxF"/>

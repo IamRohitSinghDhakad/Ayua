@@ -1,26 +1,25 @@
 //
-//  HistoryViewController.swift
+//  UsersHistoryViewController.swift
 //  AYUA
 //
-//  Created by Rohit Singh Dhakad  [C] on 08/01/26.
+//  Created by Rohit Singh Dhakad  [C] on 25/01/26.
 //
 
 import UIKit
 import SDWebImage
 
-class HistoryViewController: UIViewController {
+class UsersHistoryViewController: UIViewController {
 
-    @IBOutlet weak var vwPending: UIView!
-    @IBOutlet weak var vwAccepted: UIView!
+    @IBOutlet weak var vwOffers: UIView!
+    @IBOutlet weak var vwInProcess: UIView!
     @IBOutlet weak var vwCompleted: UIView!
     @IBOutlet weak var tblVw: UITableView!
-    @IBOutlet weak var btnOnPending: UIButton!
 
     var arrJobs = [JobsModel]()
     private let refreshControl = UIRefreshControl()
 
     enum JobStatus: String {
-        case pending = "Pending,Awarded"
+        case pending = "Awarded"
         case accepted = "Accepted"
         case completed = "Completed"
     }
@@ -38,15 +37,18 @@ class HistoryViewController: UIViewController {
         super.viewWillAppear(animated)
         call_WebService_GetJobs(strStatus: currentStatus.rawValue)
     }
-
+    
+    @IBAction func btnOnNotification(_ sender: Any) {
+    }
+    
     @IBAction func btnOpenSideMenu(_ sender: Any) {
         SideMenuManager.shared.showMenu(from: self)
     }
 
-    @IBAction func btnPending(_ sender: Any) {
+    @IBAction func btnOffers(_ sender: Any) {
         switchTab(.pending)
     }
-    @IBAction func btnAccepted(_ sender: Any) {
+    @IBAction func btnInProcess(_ sender: Any) {
         switchTab(.accepted)
 
     }
@@ -64,9 +66,9 @@ class HistoryViewController: UIViewController {
     }
 
     private func updateTabUI() {
-        vwPending.backgroundColor =
+        vwOffers.backgroundColor =
             currentStatus == .pending ? .primary : .white
-        vwAccepted.backgroundColor =
+        vwInProcess.backgroundColor =
             currentStatus == .accepted ? .primary : .white
         vwCompleted.backgroundColor =
             currentStatus == .completed ? .primary : .white
@@ -88,13 +90,13 @@ class HistoryViewController: UIViewController {
     private func setupTableView() {
 
         tblVw.register(
-            UINib(nibName: "PendingTableViewCell", bundle: nil),
-            forCellReuseIdentifier: "PendingTableViewCell"
+            UINib(nibName: "OffersTableViewCell", bundle: nil),
+            forCellReuseIdentifier: "OffersTableViewCell"
         )
 
         tblVw.register(
-            UINib(nibName: "AcceptedTableViewCell", bundle: nil),
-            forCellReuseIdentifier: "AcceptedTableViewCell"
+            UINib(nibName: "InProcessTableViewCell", bundle: nil),
+            forCellReuseIdentifier: "InProcessTableViewCell"
         )
 
         tblVw.register(
@@ -109,7 +111,7 @@ class HistoryViewController: UIViewController {
     }
 }
 
-extension HistoryViewController: UITableViewDelegate, UITableViewDataSource {
+extension UsersHistoryViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return arrJobs.count
@@ -124,72 +126,63 @@ extension HistoryViewController: UITableViewDelegate, UITableViewDataSource {
 
         case .pending:
             let cell = tableView.dequeueReusableCell(
-                withIdentifier: "PendingTableViewCell",
+                withIdentifier: "OffersTableViewCell",
                 for: indexPath
-            ) as! PendingTableViewCell
-
-            if job.status == "Awarded" {
-                cell.vwServices.isHidden = true
-                cell.vwUserDetails.isHidden = false
-                cell.vwButtons.isHidden = false
-                cell.imgVwUser.sd_setImage(
-                    with: URL(string: job.providerProfile),
-                    placeholderImage: UIImage(named: "logo")
-                )
-                cell.lblUserName.text = job.providerName
-                cell.lblrating.text = job.providerRating
-                
-            }else{
-                cell.vwUserDetails.isHidden = true
-                cell.vwButtons.isHidden = true
-                cell.vwServices.isHidden = false
+            ) as! OffersTableViewCell
+            
+            cell.imgVwUser.sd_setImage(
+                with: URL(string: job.userProfile),
+                placeholderImage: UIImage(named: "logo")
+            )
+            cell.lblUserName.text = job.userName
+            cell.lblRating.text = job.userRating
+            
+            if let components = job.bidDate.dateComponents() {
+                cell.lblDay.text = components.dayName
+                cell.lblDate.text = components.day
+                cell.lblMonth.text = components.month
+                cell.lblYear.text = components.year
             }
             
+            let result1 = job.bidTime.splitTime()
+            cell.lblTime.text = result1.time
+            cell.lblAMPM.text = result1.period
            
             
             
-            cell.lblServiceNames.text = job.subCategoryName
-            cell.lblDescription.text = job.detail
-            
-            // Collect images safely
-               let images = [
-                   job.image1,
-                   job.image2,
-                   job.image3,
-                   job.image4
-               ].filter { !$0.isEmpty }
-
-               cell.configureImages(images)
+            cell.lblLocation.text = job.address
+            cell.lblDetails.text = job.detail
             
             
             return cell
 
         case .accepted:
             let cell = tableView.dequeueReusableCell(
-                withIdentifier: "AcceptedTableViewCell",
+                withIdentifier: "InProcessTableViewCell",
                 for: indexPath
-            ) as! AcceptedTableViewCell
+            ) as! InProcessTableViewCell
 
             cell.imgVwUser.sd_setImage(
-                with: URL(string: job.providerProfile),
+                with: URL(string: job.userProfile),
                 placeholderImage: UIImage(named: "logo")
             )
-            cell.lblUserName.text = job.providerName
-            cell.lblrating.text = job.providerRating
-            cell.lbldetail.text = job.detail
-            cell.lblAwatrded.text = "Awarded"
+            cell.lblUserName.text = job.userName
+            cell.lblAverageRating.text = job.userRating
+            cell.lblDetails.text = job.detail
+            cell.lblService.text = job.subCategoryName
+            cell.lblAddress.text = job.address
             
-            // Collect images safely
-               let images = [
-                   job.image1,
-                   job.image2,
-                   job.image3,
-                   job.image4
-               ].filter { !$0.isEmpty }
-
-               cell.configureImages(images)
+            if let components = job.bidDate.dateComponents() {
+                cell.lblDay.text = components.dayName
+                cell.lblDate.text = components.day
+                cell.lblMonth.text = components.month
+                cell.lblYear.text = components.year
+            }
             
-            // configure accepted cell
+            let result1 = job.bidTime.splitTime()
+            cell.lblTime.text = result1.time
+            cell.lblAMPM.text = result1.period
+            
             return cell
 
         case .completed:
@@ -199,12 +192,12 @@ extension HistoryViewController: UITableViewDelegate, UITableViewDataSource {
             ) as! CompletedTableViewCell
 
             cell.imgVwUser.sd_setImage(
-                with: URL(string: job.providerProfile),
+                with: URL(string: job.userProfile),
                 placeholderImage: UIImage(named: "logo")
             )
-            cell.lblUserName.text = job.providerName
-            cell.lblrating.text = job.providerRating
-            cell.lblAwatrded.text = "Completed"//job.subCategoryName
+            cell.lblUserName.text = job.userName
+            cell.lblrating.text = job.userRating
+            cell.lblAwatrded.text = "Completed"
             cell.lblStatus.text = job.subCategoryName
             cell.lblDetail.text = job.detail
             
@@ -240,7 +233,7 @@ extension HistoryViewController: UITableViewDelegate, UITableViewDataSource {
 }
 
 
-extension HistoryViewController {
+extension UsersHistoryViewController {
 
     func call_WebService_GetJobs(strStatus: String) {
 
@@ -263,9 +256,10 @@ extension HistoryViewController {
             ] as [String: Any]
 
         print(dictParam)
+        
 
         objWebServiceManager.requestPost(
-            strURL: WsUrl.url_getUserJobs,
+            strURL: WsUrl.url_getProviderJobs,
             queryParams: [:],
             params: dictParam,
             strCustomValidation: "",
