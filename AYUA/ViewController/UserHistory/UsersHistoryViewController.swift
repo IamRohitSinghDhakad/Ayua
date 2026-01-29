@@ -100,8 +100,8 @@ class UsersHistoryViewController: UIViewController {
         )
 
         tblVw.register(
-            UINib(nibName: "CompletedTableViewCell", bundle: nil),
-            forCellReuseIdentifier: "CompletedTableViewCell"
+            UINib(nibName: "CompleteTableViewCell", bundle: nil),
+            forCellReuseIdentifier: "CompleteTableViewCell"
         )
 
         tblVw.delegate = self
@@ -137,14 +137,14 @@ extension UsersHistoryViewController: UITableViewDelegate, UITableViewDataSource
             cell.lblUserName.text = job.userName
             cell.lblRating.text = job.userRating
             
-            if let components = job.bidDate.dateComponents() {
+            if let components = job.entryDate.dateComponents() {
                 cell.lblDay.text = components.dayName
                 cell.lblDate.text = components.day
                 cell.lblMonth.text = components.month
                 cell.lblYear.text = components.year
             }
             
-            let result1 = job.bidTime.splitTime()
+            let result1 = job.entryDate.splitTime()
             cell.lblTime.text = result1.time
             cell.lblAMPM.text = result1.period
            
@@ -187,25 +187,36 @@ extension UsersHistoryViewController: UITableViewDelegate, UITableViewDataSource
 
         case .completed:
             let cell = tableView.dequeueReusableCell(
-                withIdentifier: "CompletedTableViewCell",
+                withIdentifier: "CompleteTableViewCell",
                 for: indexPath
-            ) as! CompletedTableViewCell
+            ) as! CompleteTableViewCell
 
             cell.imgVwUser.sd_setImage(
                 with: URL(string: job.userProfile),
                 placeholderImage: UIImage(named: "logo")
             )
             cell.lblUserName.text = job.userName
-            cell.lblrating.text = job.userRating
-            cell.lblAwatrded.text = "Completed"
-            cell.lblStatus.text = job.subCategoryName
-            cell.lblDetail.text = job.detail
+            cell.lblRating.text = job.userRating
+            cell.lblAddress.text = job.address
+            cell.lblSubCategory.text = job.subCategoryName
+            cell.lblDetails.text = job.detail
             
             if job.dropAddress.isEmpty {
                 cell.vwLocation.isHidden = true
             } else {
                 cell.vwLocation.isHidden = false
             }
+            
+            if let components = job.bidDate.dateComponents() {
+                cell.lblDay.text = components.dayName
+                cell.lblDate.text = components.day
+                cell.lblMonth.text = components.month
+                cell.lblYear.text = components.year
+            }
+            
+            let result1 = job.bidTime.splitTime()
+            cell.lblTime.text = result1.time
+            cell.lblAMPM.text = result1.period
             
             cell.lblAddressA.text = job.address
             cell.lblAddressB.text = job.dropAddress
@@ -218,14 +229,14 @@ extension UsersHistoryViewController: UITableViewDelegate, UITableViewDataSource
         
         let obj = arrJobs[indexPath.row]
         
-        if obj.status == "Pending" {
-            let vc = self.storyboard?.instantiateViewController(withIdentifier: "ProfessionalViewController") as! ProfessionalViewController
-            vc.objJobDetails = arrJobs[indexPath.row]
-            self.navigationController?.pushViewController(vc, animated: true)
-        }else{
-            let vc = self.storyboard?.instantiateViewController(withIdentifier: "JobDetailViewController") as! JobDetailViewController
+        if obj.status == "Completed" {
+            let vc = self.storyboard?.instantiateViewController(withIdentifier: "UserServiceDetailsViewController") as! UserServiceDetailsViewController
             vc.objJob = arrJobs[indexPath.row]
             self.navigationController?.pushViewController(vc, animated: true)
+        }else{
+            //            let vc = self.storyboard?.instantiateViewController(withIdentifier: "ProfessionalViewController") as! ProfessionalViewController
+            //            vc.objJobDetails = arrJobs[indexPath.row]
+            //            self.navigationController?.pushViewController(vc, animated: true)
         }
         
     }
@@ -250,7 +261,7 @@ extension UsersHistoryViewController {
 
         let dictParam =
             [
-                "user_id": objAppShareData.UserDetail.strUserId!,
+                "provider_id": objAppShareData.UserDetail.strUserId!,
                 "lang": objAppShareData.currentLanguage,
                 "status": self.currentStatus.rawValue,
             ] as [String: Any]

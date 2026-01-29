@@ -14,11 +14,18 @@ class MyAccountViewController: UIViewController {
     @IBOutlet weak var tfMobileNumber: UITextField!
     @IBOutlet weak var tfName: UITextField!
     @IBOutlet weak var tfPassword: UITextField!
+    @IBOutlet weak var vwServiceType: UIView!
+    @IBOutlet weak var vwProfession: UIView!
+    @IBOutlet weak var tfServiceType: DropDown!
+    @IBOutlet weak var tfProfession: DropDown!
     
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.tfServiceType.delegate = self
+        self.tfProfession.delegate = self
 
     }
     

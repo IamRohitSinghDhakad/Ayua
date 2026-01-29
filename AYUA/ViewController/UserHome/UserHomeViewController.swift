@@ -121,6 +121,14 @@ extension UserHomeViewController: UITableViewDataSource, UITableViewDelegate {
             cell.sendOffervw.isHidden = true
         }
         
+        if job.isBidded == "1"{
+            cell.bidVw.isHidden = false
+            cell.sendOffervw.isHidden = true
+        }else{
+            cell.bidVw.isHidden = true
+            cell.sendOffervw.isHidden = false
+        }
+        
         cell.lblDistance.text = String.distanceInKM(
             fromLat: currentLat,
             fromLng: currentLong,
@@ -136,6 +144,7 @@ extension UserHomeViewController: UITableViewDataSource, UITableViewDelegate {
         )
         cell.lblAddress.text = job.address
         cell.lblDetails.text = job.detail
+        cell.lblSubcategory.text = job.subCategoryName
         
         return cell
     }

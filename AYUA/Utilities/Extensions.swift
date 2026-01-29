@@ -594,17 +594,22 @@ extension UIViewController {
 extension String {
     
 
-    /// Calculates distance in KM between two coordinates (all inputs as String)
-    static func distanceInKM(fromLat currentLat: String,fromLng currentLng: String,toLat otherLat: String,toLng otherLng: String) -> String {
+    /// Calculates distance between two coordinates.
+    /// - Returns: Distance in meters if < 1 KM, otherwise in KM
+    static func distanceInKM(
+        fromLat currentLat: String,
+        fromLng currentLng: String,
+        toLat otherLat: String,
+        toLng otherLng: String
+    ) -> String {
 
-        print(currentLat, currentLng, otherLat, otherLng)
         guard
             let lat1 = Double(currentLat),
             let lon1 = Double(currentLng),
             let lat2 = Double(otherLat),
             let lon2 = Double(otherLng)
         else {
-            return "0 km"
+            return "0 m"
         }
 
         let earthRadius = 6371.0 // KM
@@ -619,56 +624,145 @@ extension String {
             sin(dLon / 2) * sin(dLon / 2)
 
         let c = 2 * atan2(sqrt(a), sqrt(1 - a))
-        let distance = earthRadius * c
+        let distanceKM = earthRadius * c
 
-        return String(format: "%.2f km", distance)
+        if distanceKM < 1 {
+            let meters = distanceKM * 1000
+            return String(format: "%.0f m", meters)
+        } else {
+            return String(format: "%.2f km", distanceKM)
+        }
     }
 
+
     
-    func dateComponents() -> (dayName: String,
-                              day: String,
-                              month: String,
-                              year: String)? {
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
-        
-        guard let date = dateFormatter.date(from: self) else {
-            return nil
+//    func dateComponents() -> (dayName: String,
+//                              day: String,
+//                              month: String,
+//                              year: String)? {
+//        
+//        let dateFormatter = DateFormatter()
+//        dateFormatter.dateFormat = "yyyy-MM-dd"
+//        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+//        
+//        guard let date = dateFormatter.date(from: self) else {
+//            return nil
+//        }
+//        
+//        let calendar = Calendar.current
+//        
+//        // Day name 
+//        let dayNameFormatter = DateFormatter()
+//        dayNameFormatter.dateFormat = "EEEE"
+//        let dayName = dayNameFormatter.string(from: date)
+//        
+//        // Day
+//        let day = String(calendar.component(.day, from: date))
+//        
+//        // Month
+//        let monthFormatter = DateFormatter()
+//        monthFormatter.dateFormat = "MMMM"
+//        let month = monthFormatter.string(from: date)
+//        
+//        // Year
+//        let year = String(calendar.component(.year, from: date))
+//        
+//        return (dayName, day, month, year)
+//    }
+    func dateComponents(
+        timeZone: TimeZone = .current
+    ) -> (dayName: String,
+          day: String,
+          month: String,
+          year: String)? {
+
+        let formats = [
+            "yyyy-MM-dd",
+            "yyyy-MM-dd HH:mm:ss"
+        ]
+
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = timeZone
+
+        var parsedDate: Date?
+
+        for format in formats {
+            formatter.dateFormat = format
+            if let date = formatter.date(from: self) {
+                parsedDate = date
+                break
+            }
         }
-        
+
+        guard let date = parsedDate else { return nil }
+
         let calendar = Calendar.current
-        
-        // Day name 
+
         let dayNameFormatter = DateFormatter()
         dayNameFormatter.dateFormat = "EEEE"
-        let dayName = dayNameFormatter.string(from: date)
-        
-        // Day
-        let day = String(calendar.component(.day, from: date))
-        
-        // Month
+        dayNameFormatter.timeZone = timeZone
+
         let monthFormatter = DateFormatter()
         monthFormatter.dateFormat = "MMMM"
-        let month = monthFormatter.string(from: date)
-        
-        // Year
-        let year = String(calendar.component(.year, from: date))
-        
-        return (dayName, day, month, year)
+        monthFormatter.timeZone = timeZone
+
+        return (
+            dayName: dayNameFormatter.string(from: date),
+            day: String(calendar.component(.day, from: date)),
+            month: monthFormatter.string(from: date),
+            year: String(calendar.component(.year, from: date))
+        )
     }
+
+
     
-    func splitTime() -> (time: String, period: String?) {
-           
-           let components = self.split(separator: " ")
-           
-           if components.count == 2 {
-               // Format: "5:40 AM"
-               return (time: String(components[0]), period: String(components[1]))
-           } else {
-               // Format: "09:00:000" or any other format
-               return (time: self, period: nil)
-           }
-       }
+//    func splitTime() -> (time: String, period: String?) {
+//           
+//           let components = self.split(separator: " ")
+//           
+//           if components.count == 2 {
+//               // Format: "5:40 AM"
+//               return (time: String(components[0]), period: String(components[1]))
+//           } else {
+//               // Format: "09:00:000" or any other format
+//               return (time: self, period: nil)
+//           }
+//       }
+    
+    func splitTime(
+        timeZone: TimeZone = .current
+    ) -> (time: String, period: String?) {
+
+        let dateFormats = [
+            "yyyy-MM-dd HH:mm:ss",
+            "HH:mm:ss",
+            "h:mm a"
+        ]
+
+        let inputFormatter = DateFormatter()
+        inputFormatter.locale = Locale(identifier: "en_US_POSIX")
+        inputFormatter.timeZone = timeZone
+
+        let outputFormatter = DateFormatter()
+        outputFormatter.locale = Locale(identifier: "en_US_POSIX")
+        outputFormatter.timeZone = timeZone
+        outputFormatter.dateFormat = "h:mm a"
+
+        for format in dateFormats {
+            inputFormatter.dateFormat = format
+            if let date = inputFormatter.date(from: self) {
+                let formatted = outputFormatter.string(from: date)
+                let parts = formatted.split(separator: " ")
+                return (
+                    time: String(parts[0]),
+                    period: parts.count > 1 ? String(parts[1]) : nil
+                )
+            }
+        }
+
+        return (self, nil)
+    }
+
+
 }

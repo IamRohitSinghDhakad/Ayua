@@ -23,6 +23,7 @@ class JobsModel: NSObject {
     var subCategoryName: String = ""
     var virtualAmount: String = ""
     var isReviewed: String = ""
+    var isBidded: String = ""
 
     // MARK: - Location
     var lat: String = ""
@@ -80,6 +81,7 @@ class JobsModel: NSObject {
         subCategoryName = dict.string("sub_category")
         virtualAmount  = dict.string("virtual_amount")
         isReviewed     = dict.string("isReviewed")
+        isBidded       = dict.string("isBidded")
 
         lat           = dict.string("lat")
         lng           = dict.string("lng")

@@ -17,6 +17,7 @@ class UserHomeTableViewCell: UITableViewCell {
     @IBOutlet weak var lblAverageRating: UILabel!
     @IBOutlet weak var lblDistance: UILabel!
     @IBOutlet weak var lblDetails: UILabel!
+    @IBOutlet weak var lblSubcategory: UILabel!
     @IBOutlet weak var btnSendOffer: UIButton!
     
     override func awakeFromNib() {

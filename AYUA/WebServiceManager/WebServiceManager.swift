@@ -71,24 +71,38 @@ class WebServiceManager: NSObject {
     }
     
     //MARK:- Show/hide Indicator
-    func showIndicator(){
-        self.window?.isUserInteractionEnabled = false
-        //DispatchQueue.main.async {
-        SVProgressHUD.show()
-        //}
-    }
+//    func showIndicator(){
+//        self.window?.isUserInteractionEnabled = false
+//        //DispatchQueue.main.async {
+//        SVProgressHUD.show()
+//        //}
+//    }
+//    
+//    func hideIndicator(){
+//        self.window?.isUserInteractionEnabled = true
+//        
+//        //DispatchQueue.main.async {
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.0) {
+//            // do stuff 4 seconds later
+//            SVProgressHUD.dismiss()
+//            
+//        }
+//        //}
+//    }
     
-    func hideIndicator(){
-        self.window?.isUserInteractionEnabled = true
-        
-        //DispatchQueue.main.async {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.0) {
-            // do stuff 4 seconds later
-            SVProgressHUD.dismiss()
-            
+    func showIndicator() {
+        DispatchQueue.main.async {
+            AppLoaderView.shared.show()
         }
-        //}
     }
+
+    func hideIndicator() {
+        DispatchQueue.main.async {
+            AppLoaderView.shared.hide()
+        }
+    }
+
+    
     //get current timezone
     func getCurrentTimeZone() -> String{
         return TimeZone.current.identifier
