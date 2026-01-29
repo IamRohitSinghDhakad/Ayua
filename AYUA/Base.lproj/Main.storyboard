@@ -6574,7 +6574,7 @@
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="u5d-JV-L13">
                                                                 <rect key="frame" x="5" y="31" width="323" height="42"/>
                                                                 <subviews>
-                                                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Plumber Electricans" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="fkX-cZ-UFL" customClass="JRDropDown">
+                                                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Plumber Electricans" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="fkX-cZ-UFL" customClass="JRMultiSelectDropDown">
                                                                         <rect key="frame" x="10" y="5" width="308" height="37"/>
                                                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                                         <textInputTraits key="textInputTraits"/>
@@ -7831,7 +7831,7 @@
         <image name="dummy" width="219" height="573"/>
         <image name="eye.slash" catalog="system" width="128" height="97"/>
         <image name="history" width="64" height="64"/>
-        <image name="info" width="48" height="48"/>
+        <image name="info" width="60" height="60"/>
         <image name="location" width="56" height="56"/>
         <image name="logo" width="508" height="344"/>
         <image name="magnifyingglass" catalog="system" width="128" height="117"/>
@@ -7845,7 +7845,7 @@
         <image name="star_yellow" width="60" height="60"/>
         <image name="start_gray" width="60" height="60"/>
         <image name="step1" width="450" height="43"/>
-        <image name="tick" width="61" height="61"/>
+        <image name="tick" width="38" height="28"/>
         <image name="upload" width="32" height="32"/>
         <image name="xmark.bin" catalog="system" width="128" height="92"/>
         <namedColor name="0166FF">

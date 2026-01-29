@@ -26,7 +26,7 @@ class MyReviewsViewController: UIViewController {
         
         self.lblUserName.text = objAppShareData.UserDetail.name
         self.imgVwUser.sd_setImage(with: URL(string: objAppShareData.UserDetail.userImage ?? ""), placeholderImage: UIImage(named: "logo"))
-        self.veRatings.rating = Double(objAppShareData.UserDetail.rating ?? 1.0)
+        self.veRatings.rating = Double(objAppShareData.UserDetail.rating ?? "0.0") ?? 1.0
         
         self.tblVw.delegate = self
         self.tblVw.dataSource = self
