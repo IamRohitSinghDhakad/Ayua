@@ -52,6 +52,9 @@ extension ProfessionalViewController: UITableViewDelegate, UITableViewDataSource
         cell.btnOnChat.tag = indexPath.row
         cell.btnOnChat.addTarget(self, action: #selector(btnOnChatTapped(_:)), for: .touchUpInside)
         
+        cell.btnOnAward.tag = indexPath.row
+        cell.btnOnAward.addTarget(self, action: #selector(btnOnAwardTapped(_:)), for: .touchUpInside)
+        
         return cell
     }
     
@@ -67,9 +70,19 @@ extension ProfessionalViewController: UITableViewDelegate, UITableViewDataSource
     @objc func btnOnChatTapped(_ sender: UIButton) {
         let index = sender.tag
         let selectedObj = arrBidProposalModel[index]
+        let vc = self.storyboard?.instantiateViewController(withIdentifier: "ChatDetailViewController")as! ChatDetailViewController
+        vc.strReceiverId = selectedObj.id ?? ""
+        vc.strSenderId = selectedObj.providerId ?? ""
+        vc.strJobId = selectedObj.jobId ?? ""
+        vc.strUsername = selectedObj.providerName ?? ""
+        //vc.isBlocked = selectedObj.strBlocked
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc func btnOnAwardTapped(_ sender: UIButton) {
+        let index = sender.tag
+        let selectedObj = arrBidProposalModel[index]
         
-        let chatVC = self.storyboard?.instantiateViewController(withIdentifier: "ChatDetailViewController") as! ChatDetailViewController
-        self.navigationController?.pushViewController(chatVC, animated: true)
     }
 
 }

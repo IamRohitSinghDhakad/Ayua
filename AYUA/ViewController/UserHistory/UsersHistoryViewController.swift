@@ -172,17 +172,28 @@ extension UsersHistoryViewController: UITableViewDelegate, UITableViewDataSource
             cell.lblService.text = job.subCategoryName
             cell.lblAddress.text = job.address
             
-            if let components = job.bidDate.dateComponents() {
+            if let components = job.entryDate.dateComponents() {
                 cell.lblDay.text = components.dayName
                 cell.lblDate.text = components.day
                 cell.lblMonth.text = components.month
                 cell.lblYear.text = components.year
             }
             
-            let result1 = job.bidTime.splitTime()
+            let result1 = job.entryDate.splitTime()
             cell.lblTime.text = result1.time
             cell.lblAMPM.text = result1.period
             
+            cell.btnManage.tag = indexPath.row
+            cell.btnCancel.tag = indexPath.row
+            
+            cell.btnManage.addTarget(self,
+                                     action: #selector(btnOnManageTapped(_:)),
+                                     for: .touchUpInside)
+            
+            cell.btnCancel.addTarget(self,
+                                     action: #selector(btnOnCancelTapped(_:)),
+                                     for: .touchUpInside)
+
             return cell
 
         case .completed:
@@ -207,14 +218,14 @@ extension UsersHistoryViewController: UITableViewDelegate, UITableViewDataSource
                 cell.vwLocation.isHidden = false
             }
             
-            if let components = job.bidDate.dateComponents() {
+            if let components = job.entryDate.dateComponents() {
                 cell.lblDay.text = components.dayName
                 cell.lblDate.text = components.day
                 cell.lblMonth.text = components.month
                 cell.lblYear.text = components.year
             }
             
-            let result1 = job.bidTime.splitTime()
+            let result1 = job.entryDate.splitTime()
             cell.lblTime.text = result1.time
             cell.lblAMPM.text = result1.period
             
@@ -239,6 +250,20 @@ extension UsersHistoryViewController: UITableViewDelegate, UITableViewDataSource
             //            self.navigationController?.pushViewController(vc, animated: true)
         }
         
+    }
+    
+    
+    @objc func btnOnManageTapped(_ sender: UIButton) {
+        let obj = arrJobs[sender.tag]
+        let vc = storyboard?.instantiateViewController(
+            withIdentifier: "UserServiceDetailsViewController"
+        ) as! UserServiceDetailsViewController
+        vc.objJob = obj
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc func btnOnCancelTapped(_ sender: UIButton) {
+       
     }
         
 }

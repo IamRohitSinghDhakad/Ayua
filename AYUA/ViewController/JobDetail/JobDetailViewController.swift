@@ -50,14 +50,14 @@ class JobDetailViewController: UIViewController {
             self.lblUserRating.text = job.providerRating
             self.lblPrice.text = job.bidAmount
 
-            if let components = job.bidDate.dateComponents() {
+            if let components = job.entryDate.dateComponents() {
                 self.lblWeekDay.text = components.dayName
                 self.lblWeekDate.text = components.day
                 self.lblMonth.text = components.month
                 self.lblYear.text = components.year
             }
             
-            let result1 = job.bidTime.splitTime()
+            let result1 = job.entryDate.splitTime()
             self.lblTime.text = result1.time
             self.lblAmPM.text = result1.period
             
@@ -92,6 +92,7 @@ class JobDetailViewController: UIViewController {
     }
 
     @IBAction func btnOnChatToProfessional(_ sender: Any) {
+        
     }
 
     @IBAction func btnPayForService(_ sender: Any) {

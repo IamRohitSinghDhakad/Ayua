@@ -7,6 +7,7 @@
 
 import UIKit
 import SDWebImage
+import SwiftUI
 
 class ChatViewController: UIViewController {
 
@@ -92,14 +93,30 @@ extension ChatViewController : UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let vc = self.storyboard?.instantiateViewController(withIdentifier: "ChatDetailViewController")as! ChatDetailViewController
-        vc.strReceiverId = self.arrUserList[indexPath.row].receiver_id ?? ""
-        vc.strSenderId = self.arrUserList[indexPath.row].sender_id ?? ""
-        vc.strJobId = self.arrUserList[indexPath.row].job_id ?? ""
-        vc.strUsername = self.arrUserList[indexPath.row].sender_name ?? ""
-        vc.isBlocked = self.arrUserList[indexPath.row].strBlocked
+//        let vc = self.storyboard?.instantiateViewController(withIdentifier: "ChatDetailViewController")as! ChatDetailViewController
+//        vc.strReceiverId = self.arrUserList[indexPath.row].receiver_id ?? ""
+//        vc.strSenderId = self.arrUserList[indexPath.row].sender_id ?? ""
+//        vc.strJobId = self.arrUserList[indexPath.row].job_id ?? ""
+//        vc.strUsername = self.arrUserList[indexPath.row].sender_name ?? ""
+//        vc.isBlocked = self.arrUserList[indexPath.row].strBlocked.boolValue
+//        
+//        self.navigationController?.pushViewController(vc, animated: true)
         
-        self.navigationController?.pushViewController(vc, animated: true)
+        let vm = ChatDetailViewModel(
+            senderId: self.arrUserList[indexPath.row].sender_id ?? "",
+            receiverId: self.arrUserList[indexPath.row].receiver_id ?? "",
+            jobId: self.arrUserList[indexPath.row].job_id ?? ""
+        )
+
+        vm.isBlocked = self.arrUserList[indexPath.row].strBlocked.boolValue
+
+        let view = DetailChatView(
+            viewModel: vm,
+            username: self.arrUserList[indexPath.row].sender_name ?? ""
+        )
+
+        let hostingVC = UIHostingController(rootView: view)
+        self.navigationController?.pushViewController(hostingVC, animated: true)
     }
     
     @objc func handleLongPressGesture(_ gesture: UILongPressGestureRecognizer) {
@@ -247,5 +264,11 @@ extension UIView {
             view = superview
         }
         return nil
+    }
+}
+
+extension String {
+    var boolValue: Bool {
+        return self == "1" || self.lowercased() == "true"
     }
 }
