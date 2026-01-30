@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import SwiftUI
 
 struct MenuItem {
     let title: String
@@ -64,7 +65,7 @@ class SideMenuManager {
             MenuItem(title: "CHAT", storyboardID: "ChatViewController", iconInactive: "CHAT", iconActive: "CHAT"),
             MenuItem(title: "HISTORY", storyboardID: "UsersHistoryViewController", iconInactive: "HISTORY", iconActive: "HISTORY"),
             MenuItem(title: "MY ACCOUNT", storyboardID: "MyAccountViewController", iconInactive: "MY ACCOUNT", iconActive: "MY ACCOUNT"),
-            MenuItem(title: "MEMBERSHIP", storyboardID: "MyAccountViewController", iconInactive: "MY ACCOUNT", iconActive: "MY ACCOUNT"),
+            MenuItem(title: "MEMBERSHIP", storyboardID: "MemberShipViewController", iconInactive: "MY ACCOUNT", iconActive: "MY ACCOUNT"),
             MenuItem(title: "My REVIEWS".localized(), storyboardID: "MyReviewsViewController", iconInactive: "REVIEW", iconActive: "REVIEW"),
             MenuItem(title: "LANGUAGE".localized(), storyboardID: "LanguageViewController", iconInactive: "language", iconActive: "language"),
             MenuItem(title: "PRIVACY POLICY", storyboardID: "PrivacyPolicyViewController", iconInactive: "PRIVACY", iconActive: "PRIVACY"),
@@ -132,6 +133,39 @@ class SideMenuManager {
     }
 
     // MARK: - Handle Menu Selection
+//    private func handleMenuSelection(_ item: MenuItem, from parent: UIViewController) {
+//
+//        if item.title == "LOGOUT" {
+//            showLogoutConfirmation(from: parent)
+//            return
+//        }
+//
+//        guard let storyboardID = item.storyboardID else { return }
+//
+//        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+//        let vc = storyboard.instantiateViewController(withIdentifier: storyboardID)
+//
+//        // 🔥 Handle Privacy & Terms
+//        if let legalVC = vc as? PrivacyPolicyViewController {
+//            if item.title == "PRIVACY POLICY" {
+//                legalVC.pageType = .privacy
+//            } else if item.title == "TERMS & CONDITIONS" {
+//                legalVC.pageType = .terms
+//            }
+//        }
+//
+//        if let nav = parent.navigationController {
+//            if let topVC = nav.topViewController,
+//               type(of: topVC) == type(of: vc) {
+//                print("⚠️ Already on \(storyboardID), skipping push")
+//                return
+//            }
+//            nav.pushViewController(vc, animated: true)
+//        } else {
+//            parent.present(vc, animated: true)
+//        }
+//    }
+    
     private func handleMenuSelection(_ item: MenuItem, from parent: UIViewController) {
 
         if item.title == "LOGOUT" {
@@ -139,12 +173,42 @@ class SideMenuManager {
             return
         }
 
+        // 🔥 CHAT → SwiftUI
+        if item.storyboardID == "ChatViewController" {
+
+            let chatListView = ChatListView() // SwiftUI View
+            let hostingVC = UIHostingController(rootView: chatListView)
+
+            hostingVC.title = "Chat"
+
+            if let nav = parent.navigationController {
+                nav.pushViewController(hostingVC, animated: true)
+            } else {
+                parent.present(hostingVC, animated: true)
+            }
+            return
+        }else if item.storyboardID == "MemberShipViewController" {
+
+            let chatListView = MembershipView() // SwiftUI View
+            let hostingVC = UIHostingController(rootView: chatListView)
+
+            hostingVC.title = "Membership"
+
+            if let nav = parent.navigationController {
+                nav.pushViewController(hostingVC, animated: true)
+            } else {
+                parent.present(hostingVC, animated: true)
+            }
+            return
+            
+        }
+
+        // ✅ ALL OTHER CONTROLLERS (Storyboard)
         guard let storyboardID = item.storyboardID else { return }
 
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: storyboardID)
 
-        // 🔥 Handle Privacy & Terms
         if let legalVC = vc as? PrivacyPolicyViewController {
             if item.title == "PRIVACY POLICY" {
                 legalVC.pageType = .privacy
@@ -154,16 +218,12 @@ class SideMenuManager {
         }
 
         if let nav = parent.navigationController {
-            if let topVC = nav.topViewController,
-               type(of: topVC) == type(of: vc) {
-                print("⚠️ Already on \(storyboardID), skipping push")
-                return
-            }
             nav.pushViewController(vc, animated: true)
         } else {
             parent.present(vc, animated: true)
         }
     }
+
 
 //    private func handleMenuSelection(_ item: MenuItem, from parent: UIViewController) {
 //

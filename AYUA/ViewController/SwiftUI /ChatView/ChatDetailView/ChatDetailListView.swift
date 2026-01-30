@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-struct ChatListView: View {
+struct ChatDetailListView: View {
 
     let messages: [ChatDetailModel]
     let senderId: String
