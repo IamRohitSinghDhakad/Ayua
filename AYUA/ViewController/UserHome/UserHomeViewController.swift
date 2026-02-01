@@ -8,6 +8,7 @@
 import UIKit
 import CoreLocation
 import SDWebImage
+import SwiftUI
 
 class UserHomeViewController: UIViewController,CLLocationManagerDelegate {
     
@@ -52,7 +53,13 @@ class UserHomeViewController: UIViewController,CLLocationManagerDelegate {
     
     @IBAction func btnOpenNotificationScreen(_ sender: Any) {
         
-        
+        let vm = NotificationsViewModel()
+        let notificationView = NotificationsView()
+
+        let hostingVC = UIHostingController(rootView: notificationView)
+        UIApplication.shared.topViewController()?
+            .navigationController?
+            .pushViewController(hostingVC, animated: true)
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {

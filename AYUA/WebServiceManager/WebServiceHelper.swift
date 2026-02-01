@@ -30,6 +30,7 @@ struct WsUrl{
     static let url_contact_us  = BASE_URL + "contact_us"
     
     static let url_GetConversation = BASE_URL + "get_conversation"
+    static let url_GetNotification = BASE_URL + "get_notification"
     static let url_InsertChat = BASE_URL + "insert_chat"
     static let url_GetChat = BASE_URL + "get_chat"
     static let url_Create_Payment = BASE_URL + "create_payment"

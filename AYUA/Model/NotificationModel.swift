@@ -112,3 +112,8 @@ class NotificationModel: NSObject {
     }
 }
 
+extension NotificationModel: Identifiable {
+    var wrappedId: String {
+           id ?? UUID().uuidString
+       }
+}
