@@ -73,9 +73,24 @@ class UserServiceDetailsViewController: UIViewController {
             
             if job.status == "Completed" {
                 self.imgVwServiceStatus.image = UIImage(resource: .step4)
+                if job.isReviewed == "1" {
+                    self.vwOnMyWay.isHidden = true
+                    self.vwCancelService.isHidden = true
+                }else{
+                    self.vwOnMyWay.isHidden = false
+                    self.btnOnMyWay.setTitle("Provide Feedback", for: .normal)
+                }
             }else if job.status == "Accepted" {
                 self.vwOnMyWay.isHidden = false
                 self.vwCancelService.isHidden = false
+            }else if job.status == "OnTheWay"{
+                self.vwOnMyWay.isHidden = false
+                self.vwCancelService.isHidden = true
+                self.btnOnMyWay.setTitle("I am implementing the service", for: .normal)
+            }else if job.status == "Implementation" {
+                self.vwOnMyWay.isHidden = false
+                self.vwCancelService.isHidden = true
+                self.btnOnMyWay.setTitle("Implementation Completed", for: .normal)
             }
             
             self.btnPayForService.setTitle("Payment Status \(job.bidStatus)", for: .normal)
@@ -90,6 +105,18 @@ class UserServiceDetailsViewController: UIViewController {
     
     @IBAction func btnImOnMyWay(_ sender: Any) {
         
+        if self.btnOnMyWay.currentTitle == "Provide Feedback" {
+            //Navigate to feedback screen
+        }else{
+            if self.objJob?.status == "Accepted" {
+                self.call_WebService_UpdateJobStatus(strStatus: "OnTheWay")
+            }else if self.objJob?.status == "OnTheWay"{
+                self.call_WebService_UpdateJobStatus(strStatus: "Implementation")
+            }else if self.objJob?.status == "Implementation" {
+                self.call_WebService_UpdateJobStatus(strStatus: "Completed")
+            }
+            
+        }
     }
     
     @IBAction func btnOnCallToProfessional(_ sender: Any) {
@@ -118,8 +145,8 @@ class UserServiceDetailsViewController: UIViewController {
 extension UserServiceDetailsViewController{
     
     
-    func call_WebService_GetJobs(strStatus: String) {
-
+    func call_WebService_UpdateJobStatus(strStatus: String) {
+        
         if !objWebServiceManager.isNetworkAvailable() {
             objWebServiceManager.hideIndicator()
             objAlert.showAlert(
@@ -128,20 +155,20 @@ extension UserServiceDetailsViewController{
                 controller: self
             )
         }
-
+        
         objWebServiceManager.showIndicator()
-
+        
         let dictParam =
-            [
-                "provider_id": self.objJob?.providerId ?? "",
-                "job_id": self.objJob?.jobId ?? "",
-                "lang": objAppShareData.currentLanguage,
-                "status": strStatus,
-            ] as [String: Any]
-
+        [
+            "provider_id": self.objJob?.providerId ?? "",
+            "job_id": self.objJob?.jobId ?? "",
+            "lang": objAppShareData.currentLanguage,
+            "status": strStatus,
+        ] as [String: Any]
+        
         print(dictParam)
         
-
+        
         objWebServiceManager.requestPost(
             strURL: WsUrl.url_update_job_status,
             queryParams: [:],
@@ -150,61 +177,74 @@ extension UserServiceDetailsViewController{
             showIndicator: false
         ) { (response) in
             objWebServiceManager.hideIndicator()
-
+            
+            let status = (response["status"] as? Int)
+            let message = (response["message"] as? String)
+            if status == MessageConstant.k_StatusCode {
+                if let resultArray = response["result"] as? [String: Any] {
+                    print(response)
+                    
+                    self.call_WebService_GetJobs(strJobId: self.objJob?.jobId ?? "")
+                }
+            } else {
+                
+            }
+        } failure: { (error) in
+            objWebServiceManager.hideIndicator()
+            //  self.refreshControl.endRefreshing()
+            print("Error \(error)")
+        }
+    }
+    
+    func call_WebService_GetJobs(strJobId: String) {
+        
+        if !objWebServiceManager.isNetworkAvailable() {
+            objWebServiceManager.hideIndicator()
+            objAlert.showAlert(
+                message: "No Internet Connection",
+                title: "Alert",
+                controller: self
+            )
+        }
+        
+        objWebServiceManager.showIndicator()
+        
+        let dictParam =
+        [
+            "provider_id": objAppShareData.UserDetail.strUserId!,
+            "lang": objAppShareData.currentLanguage,
+            "job_id": strJobId
+        ] as [String: Any]
+        
+        print(dictParam)
+        
+        
+        objWebServiceManager.requestPost(
+            strURL: WsUrl.url_getProviderJobs,
+            queryParams: [:],
+            params: dictParam,
+            strCustomValidation: "",
+            showIndicator: false
+        ) { (response) in
+            objWebServiceManager.hideIndicator()
+            
             let status = (response["status"] as? Int)
             let message = (response["message"] as? String)
             if status == MessageConstant.k_StatusCode {
                 if let resultArray = response["result"] as? [[String: Any]] {
                     print(response)
-//                    self.arrJobs.removeAll()
-//                    for data in resultArray {
-//                        let obj = JobsModel(from: data)
-//                        self.arrJobs.append(obj)
-//                    }
-//                    
-//
-//                    if self.arrJobs.count == 0 {
-//                        self.tblVw.displayBackgroundText(
-//                            text: "No Jobs Available",
-//                            fontStyle: "ABeeZee-Regular",
-//                            fontSize: 22
-//                        )
-//                    } else {
-//                        self.tblVw.displayBackgroundText(text: "")
-//                    }
-//                    self.refreshControl.endRefreshing()
-//                    self.arrJobs.reverse()
-//                    self.tblVw.reloadData()
+                    let data = resultArray.first
+                    
+                    self.objJob = JobsModel(from: data ?? [:])
+                    self.setData()
                 }
             } else {
-              // self.arrJobs.removeAll()
-              //  self.refreshControl.endRefreshing()
-//                if self.arrJobs.count == 0 {
-//                    self.tblVw.displayBackgroundText(
-//                        text: "No Jobs Available",
-//                        fontStyle: "ABeeZee-Regular",
-//                        fontSize: 22
-//                    )
-//                    self.tblVw.reloadData()
-//                } else {
-//                    self.tblVw.displayBackgroundText(text: "")
-//                }
+                
             }
         } failure: { (error) in
             objWebServiceManager.hideIndicator()
-          //  self.refreshControl.endRefreshing()
+            
             print("Error \(error)")
         }
     }
-    
-    
-    /*
-     @POST("update_job_status")
-     Call<ResponseBody> update_job_status(@Query("job_id") String job_id,
-                                          @Query("provider_id") String provider_id,
-                                          @Query("status") String status,
-                                          @Query("lang") String language);
-
-     */
-    
 }

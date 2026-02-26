@@ -25,6 +25,10 @@ class HomeViewController: UIViewController,CLLocationManagerDelegate {
     @IBOutlet weak var subVw: UIView!
     @IBOutlet weak var tblvw: UITableView!
     @IBOutlet weak var tfSearch: UITextField!
+    @IBOutlet weak var vwLocationDetails: UIView!
+    @IBOutlet weak var lblLocationA: UILabel!
+    @IBOutlet weak var imgPinLocation: UIImageView!
+    @IBOutlet weak var lblLocationB: UILabel!
     
     @IBOutlet weak var lblAddress: UILabel!
     private var arrImages: [BannerModel] = []
@@ -50,6 +54,7 @@ class HomeViewController: UIViewController,CLLocationManagerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.vwLocationDetails.isHidden = true
         setupLocationManager()
         hideKeyboardWhenTappedAround()
         self.tblvw.delegate = self
@@ -111,6 +116,7 @@ class HomeViewController: UIViewController,CLLocationManagerDelegate {
                 let fullAddress = addressParts.joined(separator: ", ")
                 self.currentAddress = fullAddress
                 self.lblAddress.text = fullAddress
+                self.lblLocationA.text = fullAddress
             }
         }
     }
@@ -167,6 +173,43 @@ class HomeViewController: UIViewController,CLLocationManagerDelegate {
            }
     }
     
+    @IBAction func btnOnSelectLocationA(_ sender: Any) {
+        let vc = storyboard?.instantiateViewController(
+            withIdentifier: "MapViewController"
+        ) as! MapViewController
+        
+        vc.onLocationSelected = { [weak self] data in
+            self?.currentLat = "\(data.currentLat)"
+            self?.currentLong = "\(data.currentLong)"
+            self?.currentAddress = data.currentAddress
+            self?.lblLocationA.text = data.selectedAddress
+//            self?.dropLat = "\(data.selectedLat)"
+//            self?.dropLong = "\(data.selectedLong)"
+            
+        }
+        
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @IBAction func btnOnLocationB(_ sender: Any) {
+        let vc = storyboard?.instantiateViewController(
+            withIdentifier: "MapViewController"
+        ) as! MapViewController
+        
+        vc.onLocationSelected = { [weak self] data in
+//            self?.currentLat = "\(data.currentLat)"
+//            self?.currentLong = "\(data.currentLong)"
+//            self?.currentAddress = data.currentAddress
+            self?.lblLocationB.text = data.selectedAddress
+            self?.dropAddress = data.selectedAddress
+            self?.dropLat = "\(data.selectedLat)"
+            self?.dropLong = "\(data.selectedLong)"
+            
+        }
+        
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
     @IBAction func openLoactionView(_ sender: Any) {
         let vc = storyboard?.instantiateViewController(
             withIdentifier: "MapViewController"
@@ -176,6 +219,7 @@ class HomeViewController: UIViewController,CLLocationManagerDelegate {
             self?.currentLat = "\(data.currentLat)"
             self?.currentLong = "\(data.currentLong)"
             self?.currentAddress = data.currentAddress
+            self?.lblAddress.text = data.selectedAddress
             self?.dropAddress = data.selectedAddress
             self?.dropLat = "\(data.selectedLat)"
             self?.dropLong = "\(data.selectedLong)"
@@ -369,6 +413,12 @@ extension HomeViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard collectionView == cvCategory else { return }
+        
+        if arrCategory[indexPath.item].name == "TRANSPORT" {
+            self.vwLocationDetails.isHidden = false
+        }else{
+            self.vwLocationDetails.isHidden = true
+        }
         
         self.selectedCategoryID = arrCategory[indexPath.item].id ?? ""
         selectedCategoryIndex = indexPath.item

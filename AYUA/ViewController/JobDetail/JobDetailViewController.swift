@@ -50,14 +50,14 @@ class JobDetailViewController: UIViewController {
             self.lblUserRating.text = job.providerRating
             self.lblPrice.text = job.bidAmount
 
-            if let components = job.entryDate.dateComponents() {
+            if let components = job.bidDate.dateComponents() {
                 self.lblWeekDay.text = components.dayName
                 self.lblWeekDate.text = components.day
                 self.lblMonth.text = components.month
                 self.lblYear.text = components.year
             }
             
-            let result1 = job.entryDate.splitTime()
+            let result1 = job.bidTime.splitTime()
             self.lblTime.text = result1.time
             self.lblAmPM.text = result1.period
             

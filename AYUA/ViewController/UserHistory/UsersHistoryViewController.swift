@@ -137,14 +137,14 @@ extension UsersHistoryViewController: UITableViewDelegate, UITableViewDataSource
             cell.lblUserName.text = job.userName
             cell.lblRating.text = job.userRating
             
-            if let components = job.entryDate.dateComponents() {
+            if let components = job.bidDate.dateComponents() {
                 cell.lblDay.text = components.dayName
                 cell.lblDate.text = components.day
                 cell.lblMonth.text = components.month
                 cell.lblYear.text = components.year
             }
             
-            let result1 = job.entryDate.splitTime()
+            let result1 = job.bidTime.splitTime()
             cell.lblTime.text = result1.time
             cell.lblAMPM.text = result1.period
            
@@ -172,14 +172,14 @@ extension UsersHistoryViewController: UITableViewDelegate, UITableViewDataSource
             cell.lblService.text = job.subCategoryName
             cell.lblAddress.text = job.address
             
-            if let components = job.entryDate.dateComponents() {
+            if let components = job.bidDate.dateComponents() {
                 cell.lblDay.text = components.dayName
                 cell.lblDate.text = components.day
                 cell.lblMonth.text = components.month
                 cell.lblYear.text = components.year
             }
             
-            let result1 = job.entryDate.splitTime()
+            let result1 = job.bidTime.splitTime()
             cell.lblTime.text = result1.time
             cell.lblAMPM.text = result1.period
             
@@ -212,20 +212,20 @@ extension UsersHistoryViewController: UITableViewDelegate, UITableViewDataSource
             cell.lblSubCategory.text = job.subCategoryName
             cell.lblDetails.text = job.detail
             
-            if job.dropAddress.isEmpty {
-                cell.vwLocation.isHidden = true
-            } else {
+            if job.categoryId == "3" {
                 cell.vwLocation.isHidden = false
+            } else {
+                cell.vwLocation.isHidden = true
             }
             
-            if let components = job.entryDate.dateComponents() {
+            if let components = job.bidDate.dateComponents() {
                 cell.lblDay.text = components.dayName
                 cell.lblDate.text = components.day
                 cell.lblMonth.text = components.month
                 cell.lblYear.text = components.year
             }
             
-            let result1 = job.entryDate.splitTime()
+            let result1 = job.bidTime.splitTime()
             cell.lblTime.text = result1.time
             cell.lblAMPM.text = result1.period
             
