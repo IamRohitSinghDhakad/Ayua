@@ -7,6 +7,7 @@
 
 import UIKit
 import SDWebImage
+import SwiftUI
 
 class UserServiceDetailsViewController: UIViewController {
     
@@ -129,7 +130,21 @@ class UserServiceDetailsViewController: UIViewController {
     }
     
     @IBAction func btnOnChatToProfessional(_ sender: Any) {
-        
+        let vm = ChatDetailViewModel(
+            senderId: objJob?.providerId ?? "",
+            receiverId: objJob?.userId ?? "",
+            jobId: objJob?.jobId ?? ""
+        )
+
+        vm.isBlocked = false
+
+        let view = DetailChatView(
+            viewModel: vm,
+            username: objJob?.providerName ?? ""
+        )
+
+        let hostingVC = UIHostingController(rootView: view)
+        self.navigationController?.pushViewController(hostingVC, animated: true)
     }
     
     @IBAction func btnPayForService(_ sender: Any) {

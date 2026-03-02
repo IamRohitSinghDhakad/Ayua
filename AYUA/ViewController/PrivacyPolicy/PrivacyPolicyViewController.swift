@@ -38,10 +38,10 @@ class PrivacyPolicyViewController: UIViewController {
            switch pageType {
            case .terms:
                lblHeader.text = "Terms & Conditions"
-               endPoint = "terms_conditions"
+               endPoint = "page?page=About%20Us"
            case .privacy:
                lblHeader.text = "Privacy Policy"
-               endPoint = "privacy_policy"
+               endPoint = "page?page=Privacy"
            }
 
            let fullURLString = baseURL + endPoint

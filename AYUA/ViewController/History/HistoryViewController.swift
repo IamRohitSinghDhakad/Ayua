@@ -7,6 +7,7 @@
 
 import UIKit
 import SDWebImage
+import SwiftUI
 
 class HistoryViewController: UIViewController {
 
@@ -162,6 +163,10 @@ extension HistoryViewController: UITableViewDelegate, UITableViewDataSource {
                cell.configureImages(images)
             
             
+            cell.btnChatWithProfessional.tag = indexPath.row
+            cell.btnChatWithProfessional.addTarget(self, action: #selector(btnOnChatTapped(_:)), for: .touchUpInside)
+            
+            
             return cell
 
         case .accepted:
@@ -188,6 +193,9 @@ extension HistoryViewController: UITableViewDelegate, UITableViewDataSource {
                ].filter { !$0.isEmpty }
 
                cell.configureImages(images)
+            
+            cell.btnChatWithProfessional.tag = indexPath.row
+            cell.btnChatWithProfessional.addTarget(self, action: #selector(btnOnChatTapped(_:)), for: .touchUpInside)
             
             // configure accepted cell
             return cell
@@ -235,6 +243,28 @@ extension HistoryViewController: UITableViewDelegate, UITableViewDataSource {
             self.navigationController?.pushViewController(vc, animated: true)
         }
         
+    }
+    
+    
+    @objc func btnOnChatTapped(_ sender: UIButton) {
+        let index = sender.tag
+        let selectedObj = self.arrJobs[index]
+        
+        let vm = ChatDetailViewModel(
+            senderId: selectedObj.providerId,
+            receiverId: selectedObj.userId,
+            jobId: selectedObj.jobId
+        )
+
+        vm.isBlocked = false
+
+        let view = DetailChatView(
+            viewModel: vm,
+            username: selectedObj.providerName
+        )
+
+        let hostingVC = UIHostingController(rootView: view)
+        self.navigationController?.pushViewController(hostingVC, animated: true)
     }
         
 }

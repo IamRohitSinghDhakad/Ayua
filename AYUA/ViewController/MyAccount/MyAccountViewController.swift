@@ -23,7 +23,7 @@ class MyAccountViewController: UIViewController {
     // MARK: - Data Source
        var arrCategory: [String] = []
        var arrCategoryID: [Int] = []
-
+       var pickedImages: [UIImage] = []
        var arrSubCategory: [String] = []
        var arrSubCategoryID: [Int] = []
     
@@ -58,11 +58,18 @@ class MyAccountViewController: UIViewController {
     @IBAction func btnOpenImage(_ sender: Any) {
         MediaPicker.shared.pickMedia(from: self) { image, dict in
             self.imgVwUser.image = image
+            
+            if !self.pickedImages.contains(image ?? UIImage()) {
+                self.pickedImages.append(image ?? UIImage())
+            }else{
+                self.pickedImages.removeAll()
+                self.pickedImages.append(image ?? UIImage())
+            }
         }
     }
     
     @IBAction func btnOnSave(_ sender: Any) {
-        
+        self.callWebserviceUpdateProfile()
     }
 }
 
@@ -274,6 +281,81 @@ extension MyAccountViewController {
             }
         } failure: { error in
             print("❌ Error:", error)
+        }
+    }
+    
+    
+    func callWebserviceUpdateProfile() {
+        
+        guard objWebServiceManager.isNetworkAvailable() else {
+            objWebServiceManager.hideIndicator()
+            objAlert.showAlert(message: "No Internet Connection", title: "Alert", controller: self)
+            return
+        }
+        
+        // Ensure at least 1 image
+        guard !pickedImages.isEmpty else {
+            objAlert.showAlert(message: "Please select at least one image", title: "Alert", controller: self)
+            return
+        }
+        
+        objWebServiceManager.showIndicator()
+        self.view.endEditing(true)
+        
+        // Prepare image data
+        var imagesData: [Data] = []
+        var imageParamNames: [String] = []
+        
+        for (_, image) in pickedImages.enumerated() {
+            if let data = image.jpegData(compressionQuality: 0.5) {
+                imagesData.append(data)
+                imageParamNames.append("user_image")
+            }
+        }
+        
+        // Prepare API parameters
+        let dicrParam: [String: Any] = [
+            "user_id": objAppShareData.UserDetail.strUserId ?? "",
+            "name": self.tfName.text ?? "",
+            "mobile": self.tfMobileNumber.text ?? "",
+            "password": self.tfPassword.text ?? "",
+            "category_id": "",
+            "sub_category_id": "",
+            "lang": objAppShareData.currentLanguage
+        ]
+        
+        print("Parameters:", dicrParam)
+        print("Images to upload:", imageParamNames)
+        
+        // Upload images
+        objWebServiceManager.uploadMultipartWithImagesData(
+            strURL: WsUrl.url_update_profile,
+            params: dicrParam,
+            showIndicator: true,
+            customValidation: "",
+            imageData: nil,
+            imageToUpload: imagesData,
+            imagesParam: imageParamNames,
+            fileName: "user_image",
+            mimeType: "image/jpeg"
+        ) { response in
+            objWebServiceManager.hideIndicator()
+            print(response)
+            
+            let status = response["status"] as? Int
+            let message = response["message"] as? String
+            
+            if status == MessageConstant.k_StatusCode {
+                objAlert.showAlertSingleButtonCallBack(alertBtn: "OK", title: "", message: "Success", controller: self) {
+                    self.call_Websercice_GetProfile()
+                }
+            } else {
+                objAlert.showAlert(message: response["result"] as? String ?? "Something went wrong", title: "Alert", controller: self)
+            }
+            
+        } failure: { error in
+            objWebServiceManager.hideIndicator()
+            print("Error uploading:", error)
         }
     }
 }

@@ -160,6 +160,7 @@ extension UserHomeViewController: UITableViewDataSource, UITableViewDelegate {
         let vc = self.storyboard?.instantiateViewController(
             withIdentifier: "ServiceDetailsViewController"
         ) as! ServiceDetailsViewController
+        vc.objJobDetails = arrJobs[indexPath.row]
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }

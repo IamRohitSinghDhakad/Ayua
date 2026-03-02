@@ -7,6 +7,7 @@
 
 import UIKit
 import SDWebImage
+import SwiftUI
 
 class ProfessionalViewController: UIViewController {
     @IBOutlet weak var tblVw: UITableView!
@@ -70,19 +71,36 @@ extension ProfessionalViewController: UITableViewDelegate, UITableViewDataSource
     @objc func btnOnChatTapped(_ sender: UIButton) {
         let index = sender.tag
         let selectedObj = arrBidProposalModel[index]
-        let vc = self.storyboard?.instantiateViewController(withIdentifier: "ChatDetailViewController")as! ChatDetailViewController
-        vc.strReceiverId = selectedObj.id ?? ""
-        vc.strSenderId = selectedObj.providerId ?? ""
-        vc.strJobId = selectedObj.jobId ?? ""
-        vc.strUsername = selectedObj.providerName ?? ""
-        //vc.isBlocked = selectedObj.strBlocked
-        self.navigationController?.pushViewController(vc, animated: true)
+//        let vc = self.storyboard?.instantiateViewController(withIdentifier: "ChatDetailViewController")as! ChatDetailViewController
+//        vc.strReceiverId = selectedObj.id ?? ""
+//        vc.strSenderId = selectedObj.providerId ?? ""
+//        vc.strJobId = selectedObj.jobId ?? ""
+//        vc.strUsername = selectedObj.providerName ?? ""
+//        //vc.isBlocked = selectedObj.strBlocked
+//        self.navigationController?.pushViewController(vc, animated: true)
+        
+        
+        let vm = ChatDetailViewModel(
+            senderId: selectedObj.providerId ?? "",
+            receiverId: selectedObj.id ?? "",
+            jobId: selectedObj.jobId ?? ""
+        )
+
+        vm.isBlocked = false
+
+        let view = DetailChatView(
+            viewModel: vm,
+            username: selectedObj.providerName ?? ""
+        )
+
+        let hostingVC = UIHostingController(rootView: view)
+        self.navigationController?.pushViewController(hostingVC, animated: true)
     }
     
     @objc func btnOnAwardTapped(_ sender: UIButton) {
         let index = sender.tag
         let selectedObj = arrBidProposalModel[index]
-        
+        self.call_WebService_UpdateJobStatus(strJobID: selectedObj.jobId ?? "", strProvideID: selectedObj.providerId ?? "")
     }
 
 }
@@ -137,6 +155,58 @@ extension ProfessionalViewController {
             }
         } failure: { (error) in
             objWebServiceManager.hideIndicator()
+            print("Error \(error)")
+        }
+    }
+    
+    
+    func call_WebService_UpdateJobStatus(strJobID: String, strProvideID: String){
+        
+        if !objWebServiceManager.isNetworkAvailable() {
+            objWebServiceManager.hideIndicator()
+            objAlert.showAlert(
+                message: "No Internet Connection",
+                title: "Alert",
+                controller: self
+            )
+        }
+        
+        objWebServiceManager.showIndicator()
+        
+        let dictParam =
+        [
+            "provider_id": strProvideID,
+            "job_id": strJobID,
+            "lang": objAppShareData.currentLanguage,
+            "status": "Awarded",
+        ] as [String: Any]
+        
+        print(dictParam)
+        
+        
+        objWebServiceManager.requestPost(
+            strURL: WsUrl.url_update_job_status,
+            queryParams: [:],
+            params: dictParam,
+            strCustomValidation: "",
+            showIndicator: false
+        ) { (response) in
+            objWebServiceManager.hideIndicator()
+            
+            let status = (response["status"] as? Int)
+            let message = (response["message"] as? String)
+            if status == MessageConstant.k_StatusCode {
+                if let resultArray = response["result"] as? [String: Any] {
+                    print(response)
+                    
+                    self.onBackPressed()
+                }
+            } else {
+                
+            }
+        } failure: { (error) in
+            objWebServiceManager.hideIndicator()
+            //  self.refreshControl.endRefreshing()
             print("Error \(error)")
         }
     }

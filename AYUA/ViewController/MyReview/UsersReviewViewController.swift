@@ -26,7 +26,7 @@ class UsersReviewViewController: UIViewController {
         
         self.tblVw.delegate = self
         self.tblVw.dataSource = self
-        
+        call_WebService_GetCategory()
         call_WebService_MyReviews()
     }
     
@@ -132,6 +132,42 @@ extension UsersReviewViewController {
             print("Error: \(error)")
         }
     }
+    
+    
+    func call_WebService_GetCategory() {
+        guard objWebServiceManager.isNetworkAvailable() else {
+            objAlert.showAlert(message: "No Internet Connection", title: "Alert", controller: self)
+            return
+        }
+        
+        objWebServiceManager.showIndicator()
+        
+        let dictParam: [String: Any] = [
+            "user_id": objAppShareData.UserDetail.strUserId ?? "",
+            "lang": objAppShareData.currentLanguage
+        ]
+        
+        objWebServiceManager.requestPost(strURL: WsUrl.url_getCategory, queryParams: [:], params: dictParam, strCustomValidation: "", showIndicator: false) { (response) in
+            objWebServiceManager.hideIndicator()
+            
+            print(response)
+            
+            let status = response["status"] as? Int
+            if status == MessageConstant.k_StatusCode,
+               let resultArray = response["result"] as? [[String: Any]] {
+                
+               
+                
+            } else {
+                let message = response["message"] as? String ?? "Something went wrong"
+                objAlert.showAlert(message: message, title: "Alert", controller: self)
+            }
+        } failure: { error in
+            objWebServiceManager.hideIndicator()
+            print("❌ Error:", error)
+        }
+    }
+    
 }
 
 
