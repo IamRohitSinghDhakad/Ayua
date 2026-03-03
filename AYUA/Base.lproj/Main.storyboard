@@ -2430,21 +2430,33 @@
                                                                                                 <rect key="frame" x="10" y="82" width="313" height="94"/>
                                                                                                 <subviews>
                                                                                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="m3X-xj-Xoy">
-                                                                                                        <rect key="frame" x="10" y="10" width="293" height="74"/>
+                                                                                                        <rect key="frame" x="10" y="10" width="295" height="74"/>
                                                                                                         <subviews>
                                                                                                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="umq-Cz-utB">
-                                                                                                                <rect key="frame" x="0.0" y="0.0" width="69.666666666666671" height="74"/>
+                                                                                                                <rect key="frame" x="0.0" y="0.0" width="70" height="74"/>
+                                                                                                                <constraints>
+                                                                                                                    <constraint firstAttribute="width" constant="70" id="35I-Qy-suz"/>
+                                                                                                                    <constraint firstAttribute="height" constant="74" id="Cds-0i-8vO"/>
+                                                                                                                </constraints>
                                                                                                             </imageView>
                                                                                                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="rOf-Ss-fN0">
-                                                                                                                <rect key="frame" x="74.666666666666686" y="0.0" width="69.333333333333314" height="74"/>
+                                                                                                                <rect key="frame" x="75" y="0.0" width="70" height="74"/>
                                                                                                             </imageView>
                                                                                                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="UTA-3z-uPg">
-                                                                                                                <rect key="frame" x="149" y="0.0" width="69.666666666666686" height="74"/>
+                                                                                                                <rect key="frame" x="150" y="0.0" width="70" height="74"/>
                                                                                                             </imageView>
                                                                                                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="DbC-J8-3q3">
-                                                                                                                <rect key="frame" x="223.66666666666671" y="0.0" width="69.333333333333343" height="74"/>
+                                                                                                                <rect key="frame" x="225" y="0.0" width="70" height="74"/>
                                                                                                             </imageView>
                                                                                                         </subviews>
+                                                                                                        <constraints>
+                                                                                                            <constraint firstItem="rOf-Ss-fN0" firstAttribute="height" secondItem="umq-Cz-utB" secondAttribute="height" id="3Y4-aA-RFC"/>
+                                                                                                            <constraint firstItem="rOf-Ss-fN0" firstAttribute="width" secondItem="umq-Cz-utB" secondAttribute="width" id="3yC-a0-ESI"/>
+                                                                                                            <constraint firstItem="DbC-J8-3q3" firstAttribute="width" secondItem="UTA-3z-uPg" secondAttribute="width" id="7Do-IO-jrW"/>
+                                                                                                            <constraint firstItem="UTA-3z-uPg" firstAttribute="width" secondItem="rOf-Ss-fN0" secondAttribute="width" id="IaU-hg-g4c"/>
+                                                                                                            <constraint firstItem="UTA-3z-uPg" firstAttribute="height" secondItem="rOf-Ss-fN0" secondAttribute="height" id="i04-lz-Umb"/>
+                                                                                                            <constraint firstItem="DbC-J8-3q3" firstAttribute="height" secondItem="UTA-3z-uPg" secondAttribute="height" id="lcQ-lp-hlb"/>
+                                                                                                        </constraints>
                                                                                                     </stackView>
                                                                                                 </subviews>
                                                                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -2459,6 +2471,11 @@
                                                                                                         <real key="value" value="10"/>
                                                                                                     </userDefinedRuntimeAttribute>
                                                                                                 </userDefinedRuntimeAttributes>
+                                                                                                <variation key="default">
+                                                                                                    <mask key="constraints">
+                                                                                                        <exclude reference="HFg-4X-XOc"/>
+                                                                                                    </mask>
+                                                                                                </variation>
                                                                                             </view>
                                                                                         </subviews>
                                                                                         <color key="backgroundColor" red="0.34509803919999998" green="0.33725490200000002" blue="0.83921568629999999" alpha="0.22" colorSpace="custom" customColorSpace="sRGB"/>
@@ -3417,13 +3434,13 @@
                                                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="D3g-cI-JEG">
                                                                                             <rect key="frame" x="291" y="5" width="87" height="48.333333333333336"/>
                                                                                             <subviews>
-                                                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Hiiiii" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hnK-Et-xc2">
+                                                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hiiiii" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hnK-Et-xc2">
                                                                                                     <rect key="frame" x="15" y="7.9999999999999982" width="57" height="20.333333333333329"/>
                                                                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                                                                     <nil key="textColor"/>
                                                                                                     <nil key="highlightedColor"/>
                                                                                                 </label>
-                                                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="2 week ago" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="roZ-cg-eXa">
+                                                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2 week ago" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="roZ-cg-eXa">
                                                                                                     <rect key="frame" x="10" y="30.333333333333329" width="62" height="14"/>
                                                                                                     <fontDescription key="fontDescription" name="JosefinSans-SemiBold" family="Josefin Sans" pointSize="12"/>
                                                                                                     <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -8050,7 +8067,7 @@
         <image name="dummy" width="219" height="573"/>
         <image name="eye.slash" catalog="system" width="128" height="97"/>
         <image name="history" width="64" height="64"/>
-        <image name="info" width="48" height="48"/>
+        <image name="info" width="60" height="60"/>
         <image name="locA" width="56" height="56"/>
         <image name="locB" width="56" height="56"/>
         <image name="location" width="56" height="56"/>

@@ -53,7 +53,6 @@ class UserHomeViewController: UIViewController,CLLocationManagerDelegate {
     
     @IBAction func btnOpenNotificationScreen(_ sender: Any) {
         
-        let vm = NotificationsViewModel()
         let notificationView = NotificationsView()
 
         let hostingVC = UIHostingController(rootView: notificationView)

@@ -37,6 +37,7 @@ class UserServiceDetailsViewController: UIViewController {
     @IBOutlet weak var vwOnMyWay: UIView!
     
     var objJob: JobsModel?
+    var isComingFromCancel = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -152,7 +153,8 @@ class UserServiceDetailsViewController: UIViewController {
     }
     
     @IBAction func btnCancelService(_ sender: Any) {
-        
+        self.isComingFromCancel = true
+        call_WebService_UpdateJobStatus(strStatus: "Cancel")
     }
 }
 
@@ -199,7 +201,14 @@ extension UserServiceDetailsViewController{
                 if let resultArray = response["result"] as? [String: Any] {
                     print(response)
                     
-                    self.call_WebService_GetJobs(strJobId: self.objJob?.jobId ?? "")
+                    if self.isComingFromCancel{
+                        self.isComingFromCancel = false
+                        self.onBackPressed()
+                    }else{
+                        self.call_WebService_GetJobs(strJobId: self.objJob?.jobId ?? "")
+                    }
+                    
+                    
                 }
             } else {
                 

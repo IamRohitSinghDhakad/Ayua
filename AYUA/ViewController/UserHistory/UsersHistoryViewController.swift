@@ -7,6 +7,7 @@
 
 import UIKit
 import SDWebImage
+import SwiftUI
 
 class UsersHistoryViewController: UIViewController {
 
@@ -39,6 +40,12 @@ class UsersHistoryViewController: UIViewController {
     }
     
     @IBAction func btnOnNotification(_ sender: Any) {
+        let notificationView = NotificationsView()
+
+        let hostingVC = UIHostingController(rootView: notificationView)
+        UIApplication.shared.topViewController()?
+            .navigationController?
+            .pushViewController(hostingVC, animated: true)
     }
     
     @IBAction func btnOpenSideMenu(_ sender: Any) {

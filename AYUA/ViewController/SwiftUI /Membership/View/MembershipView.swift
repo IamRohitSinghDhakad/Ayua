@@ -21,7 +21,12 @@ struct MembershipView: View {
             showNotification: true,
             notificationIcon: Image(.notifi),
             onNotificationTap: {
-                print("Notification tapped")
+                let notificationView = NotificationsView()
+
+                let hostingVC = UIHostingController(rootView: notificationView)
+                UIApplication.shared.topViewController()?
+                    .navigationController?
+                    .pushViewController(hostingVC, animated: true)
             },
             onMenuTap: {
                 if let topVC = UIApplication.shared.topViewController() {

@@ -14,7 +14,7 @@ class NotificationModel: NSObject {
     var notification_type: String?
     var assignment_date: String?
     var start_time: String?
-    var message: String?
+    var title: String?
     var created_at: String?
     var comment: String?
     var post_id: String?
@@ -48,8 +48,8 @@ class NotificationModel: NSObject {
             confirmation_status = value
         }
         
-        if let value = dictionary["message"] as? String {
-            message = value
+        if let value = dictionary["title"] as? String {
+            title = value
         }
 
         if let value = dictionary["notification_type"] as? String {

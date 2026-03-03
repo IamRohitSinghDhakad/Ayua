@@ -9,96 +9,57 @@ import SwiftUI
 import Combine
 
 
+import SwiftUI
+
 struct NotificationCardView: View {
     
     let item: NotificationModel
-    let onReject: () -> Void
-    let onReview: () -> Void
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12){
+        HStack(alignment: .top, spacing: 12) {
             
-            //Top Row
-            HStack(alignment: .top, spacing: 12){
-                Image(.profile2)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 50, height: 50)
-                    .clipShape(Circle())
+            // Left - Static Notification Image
+            Image(systemName: "bell.fill") // You can replace with Image(.notificationIcon)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 40, height: 40)
+                .foregroundColor(.blue)
+                .padding(8)
+                .background(Color.blue.opacity(0.1))
+                .clipShape(Circle())
+            
+            // Center - Notification Text
+            VStack(alignment: .leading, spacing: 4) {
                 
-                VStack(alignment: .leading, spacing: 4){
-                    Text("User Name")
-                        .font(.headline)
-                    Text("Hey! Are we still on for the meeting tomorrow?")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                        .lineLimit(2)
-                }
+                Text(item.title ?? "Notification Title")
+                    .font(.headline)
                 
-                Spacer()
-                
-                VStack(alignment: .trailing, spacing: 4){
-                    
-                    HStack(spacing: 4){
-                        Text(String(format: "%.1f", "4.5"))
-                            .font(.subheadline)
-                            .bold()
-                        
-                        Image(systemName: "star.fill")
-                            .foregroundColor(.yellow)
-                            .font(.caption)
-                    }
-                    
-                    Text("50348KM")
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                }
+                Text(item.title ?? "Notification message goes here.")
+                    .font(.subheadline)
+                    .foregroundColor(.gray)
+                    .lineLimit(2)
             }
             
-            //Profession
-            Text("item.profession")
-                .font(.subheadline)
-                .bold()
+            Spacer()
             
-            // Service Details
-            Text("Service details: \("item.details")")
-                .font(.footnote)
-                .foregroundColor(.gray)
-            
-            // Buttons
-            HStack(spacing: 12) {
-                Button(action: onReject) {
-                    Text("Reject")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
-                        .background(Color.green)
-                        .cornerRadius(10)
-                }
+            // Right - Date & Time
+            VStack(alignment: .trailing, spacing: 4) {
                 
-                Button(action: onReview) {
-                    Text("Review")
-                        .font(.headline)
-                        .foregroundColor(.black)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
-                        .background(Color(.systemGray5))
-                        .cornerRadius(10)
-                }
+                Text("18 Feb 2026")
+                    .font(.caption)
+                    .foregroundColor(.gray)
+
             }
         }
-        
         .padding()
         .background(
-            RoundedRectangle(cornerRadius: 15)
+            RoundedRectangle(cornerRadius: 12)
                 .fill(Color.white)
-                .shadow(color: Color.black.opacity(0.08), radius: 8, x: 0, y: 4)
+                .shadow(color: Color.black.opacity(0.05), radius: 4, x: 0, y: 2)
         )
-        
     }
 }
 
 #Preview {
-    NotificationCardView(item: NotificationModel(from: [:]), onReject: { }, onReview: { })
+   // NotificationCardView(item: NotificationModel(from: [:]), onReject: { }, onReview: { })
 }

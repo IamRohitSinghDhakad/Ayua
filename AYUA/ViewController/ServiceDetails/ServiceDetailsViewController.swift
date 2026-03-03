@@ -26,6 +26,9 @@ class ServiceDetailsViewController: UIViewController {
     
     var objJobDetails: JobsModel?
     
+    var strSelectedDate: String?
+    var strSelectedTime: String?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -36,7 +39,7 @@ class ServiceDetailsViewController: UIViewController {
         self.lblUserName.text = objJobDetails?.userName
         self.lblAddress.text = objJobDetails?.address
         self.lblRating.text = objJobDetails?.userRating
-        self.lblServices.text = objJobDetails?.categoryName
+        self.lblServices.text = objJobDetails?.subCategoryName
         self.txtVw.text = objJobDetails?.detail
         
         // MARK: - Set User Profile Image
@@ -97,21 +100,32 @@ class ServiceDetailsViewController: UIViewController {
     
     @IBAction func btnOnSelectDate(_ sender: Any) {
         showDatePicker(mode: .date, title: "Select Date") { [weak self] selectedDate in
-            let formatter = DateFormatter()
-            formatter.dateFormat = "dd MMM yyyy"
-            self?.lblSelectdate.text = formatter.string(from: selectedDate)
-        }
+               
+               let displayFormatter = DateFormatter()
+               displayFormatter.dateFormat = "dd MMM yyyy"
+               self?.lblSelectdate.text = displayFormatter.string(from: selectedDate)
+               
+               let apiFormatter = DateFormatter()
+               apiFormatter.dateFormat = "yyyy-MM-dd"
+               self?.strSelectedDate = apiFormatter.string(from: selectedDate)
+           }
     }
     
     @IBAction func btnOnSelectTime(_ sender: Any) {
         showDatePicker(mode: .time, title: "Select Time") { [weak self] selectedTime in
-            let formatter = DateFormatter()
-            formatter.dateFormat = "hh:mm a"
-            self?.lblSelectTime.text = formatter.string(from: selectedTime)
-        }
+               
+               let displayFormatter = DateFormatter()
+               displayFormatter.dateFormat = "hh:mm a"
+               self?.lblSelectTime.text = displayFormatter.string(from: selectedTime)
+               
+               let apiFormatter = DateFormatter()
+               apiFormatter.dateFormat = "HH:mm:ss"
+               self?.strSelectedTime = apiFormatter.string(from: selectedTime)
+           }
     }
     
     @IBAction func btnOnSendOffer(_ sender: Any) {
+        self.call_WebService_GetJobs(strJobId: self.objJobDetails?.jobId ?? "")
     }
 }
 
@@ -154,4 +168,66 @@ extension ServiceDetailsViewController{
         present(alert, animated: true)
     }
     
+}
+
+
+extension ServiceDetailsViewController{
+    
+    
+    func call_WebService_GetJobs(strJobId: String) {
+        
+        if !objWebServiceManager.isNetworkAvailable() {
+            objWebServiceManager.hideIndicator()
+            objAlert.showAlert(
+                message: "No Internet Connection",
+                title: "Alert",
+                controller: self
+            )
+        }
+        
+        objWebServiceManager.showIndicator()
+        
+        let dictParam =
+        [
+            "provider_id": objAppShareData.UserDetail.strUserId!,
+            "lang": objAppShareData.currentLanguage,
+            "job_id": strJobId,
+            "bid_amount": tfAmount.text ?? "",
+            "date": strSelectedDate ?? "",
+            "time": strSelectedTime ?? "",
+            "proposal": "Proposal",
+        ] as [String: Any]
+
+        
+        print(dictParam)
+        
+        
+        objWebServiceManager.requestPost(
+            strURL: WsUrl.url_place_bid,
+            queryParams: [:],
+            params: dictParam,
+            strCustomValidation: "",
+            showIndicator: false
+        ) { (response) in
+            objWebServiceManager.hideIndicator()
+            
+            let status = (response["status"] as? Int)
+            let message = (response["message"] as? String)
+            if status == MessageConstant.k_StatusCode {
+                if let resultArray = response["result"] as? [String: Any] {
+                    print(response)
+                    
+                    self.onBackPressed()
+                    
+                   
+                }
+            } else {
+                
+            }
+        } failure: { (error) in
+            objWebServiceManager.hideIndicator()
+            
+            print("Error \(error)")
+        }
+    }
 }
